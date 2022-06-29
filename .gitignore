@@ -92,7 +92,6 @@ load-staff-members.bash
 settings.ini
 *.swp
 .tern-port
-dibs.conf
 data/manifests/*-manifest.json
 htpasswd
 .htpasswd
