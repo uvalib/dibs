@@ -46,6 +46,8 @@ We hope your experience with DIBS is a pleasant one. Don't hesitate to send us f
 
 def send_email(user, item, start, end, base_url):
     try:
+        # our SSO users are not email addresses as assumed here so we make a real email address
+        email = f'{user}@virginia.edu'
         subject = f'DIBS loan for "{item.title}"'
         viewer = f'{base_url}/view/{item.barcode}'
         info_page = f'{base_url}/info'
@@ -54,12 +56,12 @@ def send_email(user, item, start, end, base_url):
                              end       = human_datetime(end),
                              viewer    = viewer,
                              info_page = info_page,
-                             user      = user,
+                             user      = email,
                              subject   = subject,
                              sender    = config('MAIL_SENDER'),
                              feedback  = config('FEEDBACK_URL', default = ''))
-        log(f'sending mail to {anon(user)} about loan of {item.barcode}')
+        log(f'sending mail to {anon(email)} about loan of {item.barcode}')
         mailer  = smtplib.SMTP(config('MAIL_HOST'))
-        mailer.sendmail(config('MAIL_SENDER'), [user], body)
+        mailer.sendmail(config('MAIL_SENDER'), [email], body)
     except Exception as ex:             # noqa PIE786
         log(f'unable to send mail: {str(ex)}')
