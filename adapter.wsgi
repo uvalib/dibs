@@ -9,7 +9,7 @@
 # Initial imports. More things are imported later below.
 
 import bottle
-from   os import chdir
+from   os import chdir, getenv
 from   os.path import realpath, dirname
 from   sidetrack import log, set_debug
 import sys
@@ -72,10 +72,11 @@ def dibs_application(env, start_response):
         # Determine our base url and set it once. No sense in computing this
         # on every call, because it won't change while running.  Set a custom
         # property on the dibs Bottle object so our server code can read it.
-        scheme = env.get('wsgi.url_scheme', '') or env.get('REQUEST_SCHEME', '')
-        host   = get_host(env)
-        path   = get_script_name(env)
-        dibs.base_url = f'{scheme}://{host}{path}'
+        #scheme = env.get('wsgi.url_scheme', '') or env.get('REQUEST_SCHEME', '')
+        #host   = get_host(env)
+        #path   = get_script_name(env)
+        #dibs.base_url = f'{scheme}://{host}{path}'
+        dibs.base_url = getenv('BASE_URL')
         log(f'dibs.base_url = {dibs.base_url}')
 
         # Mark this done.
