@@ -386,7 +386,7 @@ def add_item():
                 max_size = naturalsize(_MAX_THUMBNAIL_SIZE))
 
 
-@dibs.get('/edit/<barcode:int>', apply = VerifyStaffUser())
+@dibs.get('/edit/<barcode>', apply = VerifyStaffUser())
 def edit_item(barcode):
     '''Display the page to add new items.'''
     return page('edit', browser_no_cache = True, action = 'edit',
@@ -407,9 +407,9 @@ def update_item():
     # The HTML form validates the data types, but the POST might come from
     # elsewhere, so we always need to sanity-check the values.
     barcode = request.forms.get('barcode').strip()
-    if not barcode.isdigit():
-        return page('error', summary = 'invalid barcode',
-                    message = f'{barcode} is not a valid barcode')
+    #if not barcode.isdigit():
+    #    return page('error', summary = 'invalid barcode',
+    #                 message = f'{barcode} is not a valid barcode')
     duration = request.forms.get('duration').strip()
     if not duration.isdigit() or int(duration) <= 0:
         return page('error', summary = 'invalid duration',
@@ -419,6 +419,10 @@ def update_item():
         return page('error', summary = 'invalid copy number',
                     message = '# of copies must be a positive number')
     notes = request.forms.get('notes').strip()
+    title = request.forms.get('title').strip()
+    author = request.forms.get('author').strip()
+    year = request.forms.get('year').strip()
+    log(f'title is {title}')
     thumbnail = request.files.get('thumbnail-image')
 
     item = Item.get_or_none(Item.barcode == barcode)
@@ -440,8 +444,8 @@ def update_item():
             return page('error', summary = 'no such barcode',
                         message = f'Could not find an item with barcode {barcode}.')
         log(f'adding item entry {barcode} for {rec.title}')
-        Item.create(barcode = barcode, title = rec.title, author = rec.author,
-                    item_id = rec.id, item_page = rec.url, year = rec.year,
+        Item.create(barcode = barcode, title = title, author = author,
+                    item_id = rec.id, item_page = rec.url, year = year,
                     edition = rec.edition, publisher = rec.publisher,
                     num_copies = num_copies, duration = duration, notes = notes)
     else:  # The operation is /update/edit.
@@ -453,8 +457,11 @@ def update_item():
         item.duration   = duration
         item.num_copies = num_copies
         item.notes      = notes
+        item.title      = title
+        item.author     = author
+        item.year       = year
         log(f'saving changes to {barcode}')
-        item.save(only = [Item.barcode, Item.num_copies, Item.duration, Item.notes])
+        item.save(only = [Item.barcode, Item.num_copies, Item.duration, Item.notes, Item.title, Item.author, Item.year])
         # FIXME if we reduced the number of copies, we need to check loans.
 
         # Handle replacement thumbnail images if the user chose one.
@@ -482,7 +489,7 @@ def update_item():
     redirect(f'{dibs.base_url}/list')
 
 
-@dibs.get('/delete-thumbnail/<barcode:int>', apply = VerifyStaffUser())
+@dibs.get('/delete-thumbnail/<barcode>', apply = VerifyStaffUser())
 def edit(barcode):
     '''Delete the current thumbnail image.'''
     thumbnail_file = join(_THUMBNAILS_DIR, str(barcode) + '.jpg')
@@ -685,7 +692,7 @@ def general_page(name = '/'):
 
 # Next one is used by the item page to update itself w/o reloading whole page.
 
-@dibs.get('/item-status/<barcode:int>', apply = AddPersonArgument())
+@dibs.get('/item-status/<barcode>', apply = AddPersonArgument())
 def item_status(barcode, person):
     '''Returns an item summary status as a JSON string'''
     item, status, explanation, when_available = loan_availability(person.uname, barcode)
@@ -695,7 +702,7 @@ def item_status(barcode, person):
                        'when_available': human_datetime(when_available)})
 
 
-@dibs.get('/item/<barcode:int>', apply = AddPersonArgument())
+@dibs.get('/item/<barcode>', apply = AddPersonArgument())
 def show_item_info(barcode, person):
     '''Display information about the given item.'''
     item, status, explanation, when_available = loan_availability(person.uname, barcode)
@@ -768,7 +775,7 @@ def loan_item(person):
     redirect(f'{dibs.base_url}/view/{barcode}')
 
 
-@dibs.post('/return/<barcode:int>', apply = AddPersonArgument())
+@dibs.post('/return/<barcode>', apply = AddPersonArgument())
 def end_loan(barcode, person):
     '''Handle http post request to return the given item early.'''
 
@@ -807,7 +814,7 @@ def end_loan(barcode, person):
         redirect(f'{dibs.base_url}/item/{barcode}')
 
 
-@dibs.get('/view/<barcode:int>', apply = AddPersonArgument())
+@dibs.get('/view/<barcode>', apply = AddPersonArgument())
 def send_item_to_viewer(barcode, person):
     '''Redirect to the viewer.'''
     item = Item.get(Item.barcode == barcode)
@@ -825,7 +832,7 @@ def send_item_to_viewer(barcode, person):
         redirect(f'{dibs.base_url}/item/{barcode}')
 
 
-@dibs.get('/manifests/<barcode:int>', apply = AddPersonArgument())
+@dibs.get('/manifests/<barcode>', apply = AddPersonArgument())
 def return_iiif_manifest(barcode, person):
     '''Return the manifest file for a given item.'''
     item = Item.get(Item.barcode == barcode)
