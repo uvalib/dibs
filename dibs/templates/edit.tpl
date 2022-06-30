@@ -47,7 +47,7 @@
                 <label for="barcode" class="col-form-label">
                   Barcode:
                 </label>
-                <input name="barcode" type="number" class="form-control"
+                <input name="barcode" type="text" class="form-control"
                        placeholder="Barcode number"
                        %if item:
                        value="{{item.barcode}}"
