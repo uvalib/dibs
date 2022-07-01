@@ -424,7 +424,7 @@ def update_item():
     year = request.forms.get('year').strip()
     log(f'title is {title}')
     thumbnail = request.files.get('thumbnail-image')
-    item_page = f'https://search.lib.virginia.edu/?q=keyword:+{{{barcode}}}'
+    item_page = f'https://search.lib.virginia.edu/items/{barcode}'
     log(f'item_page is {item_page}')
 
     item = Item.get_or_none(Item.barcode == barcode)
