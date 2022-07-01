@@ -424,6 +424,8 @@ def update_item():
     year = request.forms.get('year').strip()
     log(f'title is {title}')
     thumbnail = request.files.get('thumbnail-image')
+    item_page = f'https://search.lib.virginia.edu/?q=keyword:+{{{barcode}}}'
+    log(f'item_page is {item_page}')
 
     item = Item.get_or_none(Item.barcode == barcode)
     if '/update/add' in request.path:
@@ -445,7 +447,7 @@ def update_item():
                         message = f'Could not find an item with barcode {barcode}.')
         log(f'adding item entry {barcode} for {rec.title}')
         Item.create(barcode = barcode, title = title, author = author,
-                    item_id = rec.id, item_page = rec.url, year = year,
+                    item_id = rec.id, item_page = item_page, year = year,
                     edition = rec.edition, publisher = rec.publisher,
                     num_copies = num_copies, duration = duration, notes = notes)
     else:  # The operation is /update/edit.
@@ -460,8 +462,9 @@ def update_item():
         item.title      = title
         item.author     = author
         item.year       = year
+        item.item_page  = item_page
         log(f'saving changes to {barcode}')
-        item.save(only = [Item.barcode, Item.num_copies, Item.duration, Item.notes, Item.title, Item.author, Item.year])
+        item.save(only = [Item.barcode, Item.num_copies, Item.duration, Item.notes, Item.title, Item.author, Item.year, Item.item_page])
         # FIXME if we reduced the number of copies, we need to check loans.
 
         # Handle replacement thumbnail images if the user chose one.
