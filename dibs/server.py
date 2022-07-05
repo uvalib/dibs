@@ -9,7 +9,7 @@ is open-source software released under a 3-clause BSD license.  Please see the
 file "LICENSE" for more information.
 '''
 
-import bottle
+import bottle 
 from   bottle import Bottle, LocalResponse, static_file, template
 from   bottle import request, response, redirect
 from   commonpy.file_utils import delete_existing
@@ -386,7 +386,7 @@ def add_item():
                 max_size = naturalsize(_MAX_THUMBNAIL_SIZE))
 
 
-@dibs.get('/edit/<barcode:int>', apply = VerifyStaffUser())
+@dibs.get('/edit/<barcode>', apply = VerifyStaffUser())
 def edit_item(barcode):
     '''Display the page to add new items.'''
     return page('edit', browser_no_cache = True, action = 'edit',
@@ -407,9 +407,9 @@ def update_item():
     # The HTML form validates the data types, but the POST might come from
     # elsewhere, so we always need to sanity-check the values.
     barcode = request.forms.get('barcode').strip()
-    if not barcode.isdigit():
-        return page('error', summary = 'invalid barcode',
-                    message = f'{barcode} is not a valid barcode')
+    #if not barcode.isdigit():
+    #    return page('error', summary = 'invalid barcode',
+    #                 message = f'{barcode} is not a valid barcode')
     duration = request.forms.get('duration').strip()
     if not duration.isdigit() or int(duration) <= 0:
         return page('error', summary = 'invalid duration',
@@ -419,7 +419,13 @@ def update_item():
         return page('error', summary = 'invalid copy number',
                     message = '# of copies must be a positive number')
     notes = request.forms.get('notes').strip()
+    # title = request.forms.get('title').strip()
+    # author = request.forms.get('author').strip()
+    # year = request.forms.get('year').strip()
+    # log(f'title is {title}')
     thumbnail = request.files.get('thumbnail-image')
+    item_page = f'https://search.lib.virginia.edu/items/{barcode}'
+    log(f'item_page is {item_page}')
 
     item = Item.get_or_none(Item.barcode == barcode)
     if '/update/add' in request.path:
@@ -453,7 +459,12 @@ def update_item():
         item.duration   = duration
         item.num_copies = num_copies
         item.notes      = notes
+        # item.title      = title
+        # item.author     = author
+        # item.year       = year
+        item.item_page  = item_page
         log(f'saving changes to {barcode}')
+        # item.save(only = [Item.barcode, Item.num_copies, Item.duration, Item.notes, Item.title, Item.author, Item.year, Item.item_page])
         item.save(only = [Item.barcode, Item.num_copies, Item.duration, Item.notes])
         # FIXME if we reduced the number of copies, we need to check loans.
 
@@ -482,7 +493,7 @@ def update_item():
     redirect(f'{dibs.base_url}/list')
 
 
-@dibs.get('/delete-thumbnail/<barcode:int>', apply = VerifyStaffUser())
+@dibs.get('/delete-thumbnail/<barcode>', apply = VerifyStaffUser())
 def edit(barcode):
     '''Delete the current thumbnail image.'''
     thumbnail_file = join(_THUMBNAILS_DIR, str(barcode) + '.jpg')
@@ -685,7 +696,7 @@ def general_page(name = '/'):
 
 # Next one is used by the item page to update itself w/o reloading whole page.
 
-@dibs.get('/item-status/<barcode:int>', apply = AddPersonArgument())
+@dibs.get('/item-status/<barcode>', apply = AddPersonArgument())
 def item_status(barcode, person):
     '''Returns an item summary status as a JSON string'''
     item, status, explanation, when_available = loan_availability(person.uname, barcode)
@@ -695,7 +706,7 @@ def item_status(barcode, person):
                        'when_available': human_datetime(when_available)})
 
 
-@dibs.get('/item/<barcode:int>', apply = AddPersonArgument())
+@dibs.get('/item/<barcode>', apply = AddPersonArgument())
 def show_item_info(barcode, person):
     '''Display information about the given item.'''
     item, status, explanation, when_available = loan_availability(person.uname, barcode)
@@ -768,7 +779,7 @@ def loan_item(person):
     redirect(f'{dibs.base_url}/view/{barcode}')
 
 
-@dibs.post('/return/<barcode:int>', apply = AddPersonArgument())
+@dibs.post('/return/<barcode>', apply = AddPersonArgument())
 def end_loan(barcode, person):
     '''Handle http post request to return the given item early.'''
 
@@ -807,7 +818,7 @@ def end_loan(barcode, person):
         redirect(f'{dibs.base_url}/item/{barcode}')
 
 
-@dibs.get('/view/<barcode:int>', apply = AddPersonArgument())
+@dibs.get('/view/<barcode>', apply = AddPersonArgument())
 def send_item_to_viewer(barcode, person):
     '''Redirect to the viewer.'''
     item = Item.get(Item.barcode == barcode)
@@ -825,7 +836,7 @@ def send_item_to_viewer(barcode, person):
         redirect(f'{dibs.base_url}/item/{barcode}')
 
 
-@dibs.get('/manifests/<barcode:int>', apply = AddPersonArgument())
+@dibs.get('/manifests/<barcode>', apply = AddPersonArgument())
 def return_iiif_manifest(barcode, person):
     '''Return the manifest file for a given item.'''
     item = Item.get(Item.barcode == barcode)

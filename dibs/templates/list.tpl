@@ -32,7 +32,7 @@
                    data-toggle="table" data-pagination="true" data-escape="false">
               <thead class="thead-light align-bottom align-text-bottom">
                 <tr>
-                  <th data-sortable="true" data-sorter="linkedNumberSort"
+                  <th data-sortable="true" data-sorter="linkedTextSort"
                       data-field="barcode">&nbsp;<br>&nbsp;<br>Barcode</th>
 
                   <th data-sortable="true" data-sorter="linkedTextSort"

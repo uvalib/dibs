@@ -22,6 +22,9 @@ from   textwrap import wrap
 from   topi import Tind
 
 from .settings import config, resolved_path
+import urllib.request
+import simplejson
+import sys
 
 
 # Classes implementing interface to specific LSPs.
@@ -106,6 +109,88 @@ class TindInterface(LSPInterface):
             raise ValueError('No such barcode {barcode} in {self.url}')
 
 
+class SolrInterface(LSPInterface):
+    '''Interface layer for TIND hosted LSP servers.'''
+
+    def __init__(self, url = None, thumbnails_dir = None):
+        '''Create an interface for the server at "url".'''
+        self.url = url
+        self._thumbnails_dir = thumbnails_dir
+        # self.host = "virgo4-solr-staging-replica-1-private.internal.lib.virginia.edu"
+        # self.port = "8080"
+        # self.collection = "test_core"
+        # self.qt         = "select"
+        # self.url        = 'https://' + host + ':' + port + '/solr/' + collection + '/' + qt + '?'
+
+        self.fl         = "fl=id,full_title_a,author_a,published_display_a,publisher_name_a,isbn_a,issn_a"
+        self.fq         = "fq=data_source_f:sirsi"
+        self.rows       = "rows=1"
+        self.wt         = "wt=json"
+        self.params     = [ self.fl, self.fq, self.wt, self.rows ] 
+        self.p          = "&".join(self.params)
+
+
+    def record(self, barcode = None):
+        '''Return a record for the item identified by the "barcode".'''
+        try:
+            rec = self.finditem(barcode = barcode)
+            doc0 = rec['response']['docs'][0]
+            rec_id = doc0['id']
+            title = doc0.get('full_title_a', [''])[0]
+            author = doc0.get('author_a', [''])[0]
+            year = doc0.get('published_display_a', [''])[0]
+            publisher = doc0.get('publisher_name_a', [''])[0]
+            isbn = doc0.get('isbn_a', [''])[0]
+            issn = doc0.get('issn_a', [''])[0]
+            isbn_issn = isbn or issn
+            edition = ''
+            url = f'https://search.lib.virginia.edu/items/{barcode}'
+            
+            log(f'record for {barcode} has id {rec_id} in {self.url}')
+            log(f'record for {barcode} has title {title}')
+            log(f'record for {barcode} has suthor {author}')
+            log(f'record for {barcode} has year {year}')
+            log(f'record for {barcode} has publisher {publisher}')
+
+            #thumbnail_file = join(self._thumbnails_dir, barcode + '.jpg')
+            # Don't overwrite existing images.
+            #if not exists(thumbnail_file):
+            #    if rec.thumbnail_url:
+            #        save_thumbnail(thumbnail_file, url = rec.thumbnail_url)
+            #    elif rec.isbn_issn:
+            #        save_thumbnail(thumbnail_file, isbn = rec.isbn_issn)
+            #    else:
+            #        log(f"{barcode} lacks ISBN & thumbnail URL => no thumbnail")
+            #else:
+            #    log(f'thumbnail image already exists in {thumbnail_file}')
+            record = LSPRecord(id        = rec_id,
+                               url       = url,
+                               title     = truncated_title(title),
+                               author    = author,
+                               publisher = publisher,
+                               year      = year,
+                               edition   = edition,
+                               isbn_issn = isbn_issn)
+            return record
+        except Exception:
+            log(f'could not find {barcode} in SOLR')
+            raise ValueError('No such barcode {barcode} in {self.url}')
+
+    def finditem(self, barcode = None):
+        '''perform search on solr looking for item with barcode "barcode".'''
+        try:
+            q=f'q=barcode_e:{barcode}'
+            full_url=self.url+'?'+self.p+'&'+q
+            connection = urllib.request.urlopen(full_url)
+            log(f'response {connection}')
+            response   = simplejson.load(connection) 
+            #response = None
+            return response
+        except Exception:
+            log(f'could not find {barcode} in SOLR')
+            raise ValueError('No such barcode {barcode} in {self.url}')
+
+            
 class FolioInterface(LSPInterface):
     '''Interface layer for FOLIO hosted LSP servers.'''
 
@@ -226,6 +311,9 @@ class LSP(LSPInterface):
             url = config('TIND_SERVER_URL', section = 'tind')
             log(f'Using TIND URL {url}')
             lsp = TindInterface(url, thumbnails_dir = thumbnails_dir)
+        elif lsp_type == 'solr':
+            url = config('SOLR_SERVER_URL', section = 'solr')
+            lsp = SolrInterface(url, thumbnails_dir = thumbnails_dir)
         else:
             lsp = UnconfiguredInterface()
 

@@ -47,14 +47,13 @@
                 <label for="barcode" class="col-form-label">
                   Barcode:
                 </label>
-                <input name="barcode" type="number" class="form-control"
+                <input name="barcode" type="text" class="form-control"
                        placeholder="Barcode number"
                        %if item:
                        value="{{item.barcode}}"
                        %end
                        required autofocus>
               </div>
-
               <div class="form-group row col-12">
                 <label for="duration" class="col-form-label">
                   Loan duration (in hours):
@@ -68,7 +67,6 @@
                        required>
               </div>
             </div>
-
             <div class="{{col_width}}"><!--middle -->
               <div class="form-group row col-12">
                 <label for="num_copies" class="col-form-label">
