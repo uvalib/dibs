@@ -29,7 +29,7 @@
 # Set the next variable to either "folio" or "tind", depending on which LSP
 # you are using, and then uncomment and set the relevant variables later in
 # this file to configure your particular LSP.
-LSP_TYPE = unconfigured
+LSP_TYPE = solr
 
 # Path to the sqlite database, relative to here.
 DATABASE_FILE = ${DATABASE_FILE:-data/dibs.db}
@@ -130,6 +130,9 @@ FOLIO_OKAPI_TOKEN =
 FOLIO_ACCESSION_PREFIX = 
 EDS_PAGE_TEMPLATE = 
 
+[solr]
+# If you use SOLR, set this to the base URL of your hosted SOLR server, plus the port and core name
+SOLR_SERVER_URL = ${SOLR_SERVER_URL:-https://unconfigured.edu/solr}
 
 [contentcafe]
 # DIB's LSP layer attempts to get book jacket cover images from multiple
