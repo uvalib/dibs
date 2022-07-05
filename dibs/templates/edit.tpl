@@ -54,43 +54,6 @@
                        %end
                        required autofocus>
               </div>
-             <div class="form-group row col-12">
-                <label for="title" class="col-form-label">
-                  Title:
-                </label>
-                <input name="title" type="text" class="form-control"
-                       placeholder="Title"
-                       %if item:
-                       value="{{item.title}}"
-                       %end
-                       required autofocus>
-              </div>
-             <div class="form-group row col-12">
-                <label for="author" class="col-form-label">
-                  Author:
-                </label>
-                <input name="author" type="text" class="form-control"
-                       placeholder="Author"
-                       %if item:
-                       value="{{item.author}}"
-                       %end
-                       required autofocus>
-              </div>
-             <div class="form-group row col-12">
-                <label for="year" class="col-form-label">
-                  Year Published:
-                </label>
-                <input name="year" type="text" class="form-control"
-                       placeholder="Year published"
-                       %if item:
-                       value="{{item.year}}"
-                       %end
-                       required autofocus>
-              </div>
-
-            </div>
-
-            <div class="{{col_width}}"><!--middle -->
               <div class="form-group row col-12">
                 <label for="duration" class="col-form-label">
                   Loan duration (in hours):
@@ -103,6 +66,8 @@
                        %end
                        required>
               </div>
+            </div>
+            <div class="{{col_width}}"><!--middle -->
               <div class="form-group row col-12">
                 <label for="num_copies" class="col-form-label">
                   Number of copies via DIBS:

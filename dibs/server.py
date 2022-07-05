@@ -9,7 +9,7 @@ is open-source software released under a 3-clause BSD license.  Please see the
 file "LICENSE" for more information.
 '''
 
-import bottle
+import bottle 
 from   bottle import Bottle, LocalResponse, static_file, template
 from   bottle import request, response, redirect
 from   commonpy.file_utils import delete_existing
@@ -419,10 +419,10 @@ def update_item():
         return page('error', summary = 'invalid copy number',
                     message = '# of copies must be a positive number')
     notes = request.forms.get('notes').strip()
-    title = request.forms.get('title').strip()
-    author = request.forms.get('author').strip()
-    year = request.forms.get('year').strip()
-    log(f'title is {title}')
+    # title = request.forms.get('title').strip()
+    # author = request.forms.get('author').strip()
+    # year = request.forms.get('year').strip()
+    # log(f'title is {title}')
     thumbnail = request.files.get('thumbnail-image')
     item_page = f'https://search.lib.virginia.edu/items/{barcode}'
     log(f'item_page is {item_page}')
@@ -446,8 +446,8 @@ def update_item():
             return page('error', summary = 'no such barcode',
                         message = f'Could not find an item with barcode {barcode}.')
         log(f'adding item entry {barcode} for {rec.title}')
-        Item.create(barcode = barcode, title = title, author = author,
-                    item_id = rec.id, item_page = item_page, year = year,
+        Item.create(barcode = barcode, title = rec.title, author = rec.author,
+                    item_id = rec.id, item_page = rec.url, year = rec.year,
                     edition = rec.edition, publisher = rec.publisher,
                     num_copies = num_copies, duration = duration, notes = notes)
     else:  # The operation is /update/edit.
@@ -459,12 +459,13 @@ def update_item():
         item.duration   = duration
         item.num_copies = num_copies
         item.notes      = notes
-        item.title      = title
-        item.author     = author
-        item.year       = year
+        # item.title      = title
+        # item.author     = author
+        # item.year       = year
         item.item_page  = item_page
         log(f'saving changes to {barcode}')
-        item.save(only = [Item.barcode, Item.num_copies, Item.duration, Item.notes, Item.title, Item.author, Item.year, Item.item_page])
+        # item.save(only = [Item.barcode, Item.num_copies, Item.duration, Item.notes, Item.title, Item.author, Item.year, Item.item_page])
+        item.save(only = [Item.barcode, Item.num_copies, Item.duration, Item.notes])
         # FIXME if we reduced the number of copies, we need to check loans.
 
         # Handle replacement thumbnail images if the user chose one.
