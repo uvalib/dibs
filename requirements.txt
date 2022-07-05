@@ -31,6 +31,7 @@ python-daemon   == 2.3.0
 python-decouple == 3.6
 rich            == 12.3.0
 sidetrack       == 2.0.1
+simplejson      == 3.17.6
 str2bool        == 1.1
 trinomial       == 0.0.3
 topi            == 1.1.0
