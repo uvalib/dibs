@@ -4,8 +4,8 @@
 scripts/make-settings.sh
 
 # temp only
-scripts/add-fake-data.sh
-scripts/add-admins.sh
+#scripts/add-fake-data.sh
+#scripts/add-admins.sh
 
 # redirect to standout/stderr
 ln -sf /proc/$$/fd/1 /var/log/apache2/access.log
