@@ -102,4 +102,6 @@ data/processing/*-processing
 data/processing/*-problem
 data/thumbnails/*.jpg
 
+# added by UVa
+.idea
 env.*
