@@ -23,8 +23,10 @@ from   topi import Tind
 
 from .settings import config, resolved_path
 import urllib.request
+import urllib.parse
 import simplejson
 import sys
+from pickle import NONE
 
 
 # Classes implementing interface to specific LSPs.
@@ -191,6 +193,136 @@ class SolrInterface(LSPInterface):
             raise ValueError('No such barcode {barcode} in {self.url}')
 
             
+class VirgoAPIInterface(LSPInterface):
+    '''Interface layer for TIND hosted LSP servers.'''
+
+    def __init__(self, url = None, urlAuth = None, thumbnails_dir = None):
+        '''Create an interface for the server at "url".'''
+        self.urlAuth = urlAuth
+        self.urlPool = url
+        self._thumbnails_dir = thumbnails_dir
+        self.authKey = None
+
+        # self.host = "virgo4-solr-staging-replica-1-private.internal.lib.virginia.edu"
+        # self.port = "8080"
+        # self.collection = "test_core"
+        # self.qt         = "select"
+        # self.url        = 'https://' + host + ':' + port + '/solr/' + collection + '/' + qt + '?'
+
+        self.fl         = "fl=id,full_title_a,author_a,published_display_a,publisher_name_a,isbn_a,issn_a"
+        self.fq         = "fq=data_source_f:sirsi"
+        self.rows       = "rows=1"
+        self.wt         = "wt=json"
+        self.params     = [ self.fl, self.fq, self.wt, self.rows ] 
+        self.p          = "&".join(self.params)
+
+
+    def record(self, barcode = None):
+        '''Return a record for the item identified by the "barcode".'''
+        try:
+            rec = self.finditem(barcode = barcode)
+            fields = rec['fields']
+            author = ""
+            year = ""
+            publisher = ""
+            title = ""
+            for i,d in enumerate(fields):
+                if d["name"] == "title_subtitle_edition" :
+                    title = d["value"]
+                elif (( d["name"] == "creator" or d["name"] == "author" ) and author == "" ):
+                    author = d["value"]
+                elif d["name"] == "published_date" :
+                    year =  d["value"]
+                elif d["name"] == "id" :
+                    rec_id = d["value"]
+                elif d["name"] == "publisher_name" :
+                    publisher = d["value"]
+                elif ( d["name"] == "isbn" and d["value"].startswith("978") ) :
+                    isbn = d["value"]
+                elif d["name"] == "issn" :
+                    issn = d["value"]
+            isbn_issn = isbn or issn
+            edition = ""
+            url = f'https://search.lib.virginia.edu/items/{rec_id}'
+            
+            log(f'record for {barcode} has id {rec_id} in {self.urlPool}')
+            log(f'record for {barcode} has title {title}')
+            log(f'record for {barcode} has suthor {author}')
+            log(f'record for {barcode} has year {year}')
+            log(f'record for {barcode} has publisher {publisher}')
+
+            #thumbnail_file = join(self._thumbnails_dir, barcode + '.jpg')
+            # Don't overwrite existing images.
+            #if not exists(thumbnail_file):
+            #    if rec.thumbnail_url:
+            #        save_thumbnail(thumbnail_file, url = rec.thumbnail_url)
+            #    elif rec.isbn_issn:
+            #        save_thumbnail(thumbnail_file, isbn = rec.isbn_issn)
+            #    else:
+            #        log(f"{barcode} lacks ISBN & thumbnail URL => no thumbnail")
+            #else:
+            #    log(f'thumbnail image already exists in {thumbnail_file}')
+            record = LSPRecord(id        = rec_id,
+                               url       = url,
+                               title     = truncated_title(title),
+                               author    = author,
+                               publisher = publisher,
+                               year      = year,
+                               edition   = edition,
+                               isbn_issn = isbn_issn)
+            return record
+        except Exception as ex:
+            log(f'could not find {barcode} in SOLR')
+            raise ValueError('No such barcode {barcode} in {self.url}')
+
+    def finditem(self, barcode = None):
+        '''perform search on solr looking for item with barcode "barcode".'''
+        try:
+            ''' get authorization key '''
+            values = {}
+            data = urllib.parse.urlencode(values).encode("utf-8")
+            authConnection = urllib.request.urlopen(url=self.urlAuth, data=data)
+            log(f'response {authConnection}')
+            self.authKey = authConnection.read()
+                
+            ''' use authorization key to do search by barcode '''
+            args = f'{{"query":"identifier: {{{barcode}}}","pagination":{{"start":0,"rows":10}},"filters":[]}}'
+            headers = dict( [ 
+                [ "Authorization", f'Bearer {str(self.authKey, "utf-8")}' ],
+                [ "Content-Type", "application/json" ]
+                ] )
+            argsdata = args.encode("utf-8")
+            search_url = self.urlPool+'/search'+'?debug=1&verbose=1'
+            request = urllib.request.Request(url = search_url, data = argsdata, headers = headers, method = "POST")
+            log(f'headers {request.headers}')
+            log(f'data {request.data}')
+            log(f'search_url {search_url}')
+            connection = urllib.request.urlopen(request)
+            log(f'response {connection}')
+            response = simplejson.load(connection)
+            lod = response["group_list"][0]["record_list"][0]["fields"]
+            ididx = None 
+            for count, ele in enumerate(lod):
+                if (ele["name"] == "id"):
+                    ididx = count
+            idval = lod[ididx]["value"]
+            
+            ''' use catkey to get item data '''
+            ''' curl -vv -X GET "https://pool-solr-ws-uva-library.internal.lib.virginia.edu/api/resource/u2915688" -H "Content-Type: application/json" -H "Authorization: Bearer $AUTH_TOKEN"'''
+            item_url = self.urlPool+'/resource/'+idval
+            log(f'item_url {item_url}')
+            request = urllib.request.Request(url = item_url, data = None, headers = headers, method = "GET")
+            connection = urllib.request.urlopen(request)
+            log(f'response {connection}')
+            response = simplejson.load(connection)
+
+            #response = None
+            return response
+        except Exception as ex:
+            log(f'could not find {barcode} in SOLR')
+            raise ValueError('No such barcode {barcode} in {self.url}')
+
+            
 class FolioInterface(LSPInterface):
     '''Interface layer for FOLIO hosted LSP servers.'''
 
@@ -314,6 +446,10 @@ class LSP(LSPInterface):
         elif lsp_type == 'solr':
             url = config('SOLR_SERVER_URL', section = 'solr')
             lsp = SolrInterface(url, thumbnails_dir = thumbnails_dir)
+        elif lsp_type == 'poolapi':
+            url = config('POOL_URL', section = 'poolapi')
+            urlAuth = config('AUTH_URL', section = 'poolapi')
+            lsp = VirgoAPIInterface(url, urlAuth, thumbnails_dir = thumbnails_dir)
         else:
             lsp = UnconfiguredInterface()
 

@@ -29,7 +29,7 @@
 # Set the next variable to either "folio" or "tind", depending on which LSP
 # you are using, and then uncomment and set the relevant variables later in
 # this file to configure your particular LSP.
-LSP_TYPE = unconfigured
+LSP_TYPE = poolapi
 
 # Path to the sqlite database, relative to here.
 DATABASE_FILE = data/dibs.db
@@ -107,6 +107,16 @@ RUN_MODE = normal
 # If you use TIND, set this to the base URL of your hosted TIND server.  For
 # example, when Caltech was using TIND, this was https://caltech.tind.io
 TIND_SERVER_URL = 
+
+[solr]
+# If you use SOLR, set this to the base URL of your hosted SOLR server, plus the port and core name
+SOLR_SERVER_URL = http://v4-solr-production-replica-1-private.internal.lib.virginia.edu:8080/solr/test_core/select
+
+
+[poolapi]
+# If you use SOLR, set this to the base URL of your hosted SOLR server, plus the port and core name
+AUTH_URL = https://search.lib.virginia.edu/authorize
+POOL_URL = https://pool-solr-ws-uva-library.internal.lib.virginia.edu/api
 
 
 [folio]
