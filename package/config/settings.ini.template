@@ -26,10 +26,10 @@
 #HTPASSWD = /usr/bin/htpasswd
 #PASSWORD_FILE = /path/to/dibs/here/password.txt
 
-# Set the next variable to either "folio" or "tind", depending on which LSP
-# you are using, and then uncomment and set the relevant variables later in
+# Set the next variable as appropriate, depending on which LSP
+# you are using, and then add/uncomment and set the relevant variables later in
 # this file to configure your particular LSP.
-LSP_TYPE = solr
+LSP_TYPE = poolapi
 
 # Path to the sqlite database, relative to here.
 DATABASE_FILE = ${DATABASE_FILE:-data/dibs.db}
@@ -130,13 +130,20 @@ FOLIO_OKAPI_TOKEN =
 FOLIO_ACCESSION_PREFIX = 
 EDS_PAGE_TEMPLATE = 
 
-[solr]
-# If you use SOLR, set this to the base URL of your hosted SOLR server, plus the port and core name
-SOLR_SERVER_URL = ${SOLR_SERVER_URL:-https://unconfigured.edu/solr}
-
 [contentcafe]
 # DIB's LSP layer attempts to get book jacket cover images from multiple
 # sources.  One source it can use is Baker & Taylor's Content Cafe 2.  If you
 # have an account for using the Content Cafe API, provide the account info.
 CC_USER =
 CC_PASSWORD = 
+
+[poolapi]
+#
+# If you use a search pool, set the authorize endpoint and the base URL of the search pool
+#
+AUTH_URL = ${AUTH_URL:-http://unconfigured.edu/authorize}
+POOL_URL = ${POOL_URL:-http://unconfigured.edu/api}
+
+#
+# end of file
+#
