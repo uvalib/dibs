@@ -226,6 +226,8 @@ class VirgoAPIInterface(LSPInterface):
             year = ""
             publisher = ""
             title = ""
+            isbn = None
+            issn = None
             for i,d in enumerate(fields):
                 if d["name"] == "title_subtitle_edition" :
                     title = d["value"]
@@ -241,7 +243,7 @@ class VirgoAPIInterface(LSPInterface):
                     isbn = d["value"]
                 elif d["name"] == "issn" :
                     issn = d["value"]
-            isbn_issn = isbn or issn
+            isbn_issn = isbn or issn or ""
             edition = ""
             url = f'https://search.lib.virginia.edu/items/{rec_id}'
             
