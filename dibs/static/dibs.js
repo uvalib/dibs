@@ -157,6 +157,5 @@ window.addEventListener('load', function () {
   if (!inIframe()) {
       let page = document.querySelector('.page-content')
       page.prepend(document.createElement('uvalib-header'));
-      page.append(document.createElement('uvalib-footer'));
   }
 })

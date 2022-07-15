@@ -1,4 +1,6 @@
 <footer class="footer bg-secondary text-center py-3 mt-5">
+    <uvalib-footer></uvalib-footer>
+<!--
     <img alt="Caltech Library logo" title="Caltech Library" typeof="foaf:Image"
          class="footer-logo media-element file-block-original"
          src="https://media.library.caltech.edu/assets/CLwhitewhiteVerticalwww.png">
@@ -17,4 +19,5 @@
       <a href="{{base_url}}/about" class="text-white ml-1">About DIBS</a>
     </span>
     %end
+-->
 </footer>
