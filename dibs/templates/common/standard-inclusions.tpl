@@ -20,3 +20,6 @@
 
 <!-- DIBS styles and modifications to Bootstrap. -->
 <link rel="stylesheet" href="{{base_url}}/static/dibs.css">
+
+<!-- UVA Library standard css styles -->
+<link rel="stylesheet" href="https://raw.githubusercontent.com/uvalib/monorepo/master/packages/web-styles/css/styles.css">
