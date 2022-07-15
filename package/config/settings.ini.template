@@ -98,6 +98,8 @@ HELP_URL = https://caltechlibrary.github.io/dibs/usage.html
 # maybe overriden by command-line options given to run-server.
 RUN_MODE = ${RUN_MODE:-verbose}
 
+# pull thumbnails from the iiif endpoint instead of adding them manually
+THUMBNAILS_URL_PATTERN = ${THUMBNAILS_URL_PATTERN:-https://unconfigured.edu/iiif/2}
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # ~~~~~~~~~~~~~~~~~~~~~~~~ LSP interface settings ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
