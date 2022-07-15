@@ -1,3 +1,4 @@
+<uvalib-header></uvalib-header>
 %if announcement:
 <!-- Site announcements banner above the nav bar. -->
 <div class="text-center p-1">

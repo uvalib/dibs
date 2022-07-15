@@ -151,11 +151,3 @@ if (!inIframe()) {
     addModuleScript("https://unpkg.internal.lib.virginia.edu/v0.0.4/uvalib-footer.js");
     addModuleScript("https://unpkg.internal.lib.virginia.edu/v0.0.4/uvalib-header.js");
 }
-
-window.addEventListener('load', function () {
-  // wait for dom before adding in header/footer
-  if (!inIframe()) {
-      let page = document.querySelector('.page-content')
-      page.prepend(document.createElement('uvalib-header'));
-  }
-})
