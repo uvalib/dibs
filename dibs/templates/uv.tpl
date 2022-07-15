@@ -15,7 +15,7 @@
     <title>{{title}}</title>
 </head>
 <body>
-    
+
   <div id="uv-container" class="container-fluid h-100 w-100 text-center">
     <p id="no-javascript" class="delayed alert alert-danger mx-auto text-center w-75 mt-4">
       Note: JavaScript is disabled in your browser.
@@ -129,7 +129,8 @@
        rangeId         : urlDataProvider.get('rid', 0),
        rotation        : Number(urlDataProvider.get('r', 0)),
        xywh            : urlDataProvider.get('xywh', ''),
-       locales         : formattedLocales
+       locales         : formattedLocales,
+       embedded        : true
      }, urlDataProvider);
 
      dibsUV.on("created", function(obj) {
