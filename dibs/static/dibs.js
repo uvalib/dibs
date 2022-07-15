@@ -129,3 +129,34 @@ function httpGet(url, contentType, callbackFn) {
     }
     xhr.send();
 };
+
+/* Add UVA Library Header and Footer elements if not in an iframe */
+function inIframe () {
+    try {
+        return window.self !== window.top;
+    } catch (e) {
+        return true;
+    }
+}
+
+function addModuleScript(url){
+    var script = document.createElement('script');
+    script.type = 'module';
+    script.src = url;    
+    document.head.appendChild(script);
+}
+
+if (!inIframe()) {
+    // add module imports
+    addModuleScript("https://unpkg.internal.lib.virginia.edu/v0.0.4/uvalib-footer.js");
+    addModuleScript("https://unpkg.internal.lib.virginia.edu/v0.0.4/uvalib-header.js");
+}
+
+window.addEventListener('load', function () {
+  // wait for dom before adding in header/footer
+  if (!inIframe()) {
+      let page = document.querySelector('.page-content')
+      page.prepend(document.createElement('uvalib-header'));
+      page.append(document.createElement('uvalib-footer'));
+  }
+})
