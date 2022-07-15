@@ -24,6 +24,6 @@
 <!-- UVA Library standard css styles -->
 <link rel="stylesheet" href="https://unpkg.com/@uvalib/web-styles/css/styles.css">
 <style>
-  html {margin: 0; padding: 0;}
-  footer.footer {background-color: inherit !important;}
+  html,body {margin: 0 !important; padding: 0 !important;}
+  footer.footer {background-color: inherit !important; padding: 0 !important;}
 </style>
