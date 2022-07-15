@@ -130,6 +130,7 @@
        rotation        : Number(urlDataProvider.get('r', 0)),
        xywh            : urlDataProvider.get('xywh', ''),
        locales         : formattedLocales,
+       embedded        : true
      }, urlDataProvider);
 
      dibsUV.on("created", function(obj) {
