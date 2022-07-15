@@ -23,3 +23,6 @@
 
 <!-- UVA Library standard css styles -->
 <link rel="stylesheet" href="https://unpkg.com/@uvalib/web-styles/css/styles.css">
+<style>
+  footer.footer {background-color: inherit !important;}
+</style>
