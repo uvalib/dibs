@@ -67,7 +67,7 @@ _MANIFEST_DIR = resolved_path(config('MANIFEST_DIR'))
 _PROCESS_DIR = resolved_path(config('PROCESS_DIR'))
 
 # Directory containing thumbnail images of item covers/jackets.
-_THUMBNAILS_DIR = resolved_path(config('THUMBNAILS_DIR'))
+_THUMBNAILS_URL_PATTERN = config('THUMBNAILS_URL_PATTERN')
 
 # Internal threshold for max size of thumbnail images uploaded via edit form.
 _MAX_THUMBNAIL_SIZE = 1 * 1024 * 1024
@@ -381,16 +381,18 @@ def manage_items():
 @dibs.get('/add', apply = VerifyStaffUser())
 def add_item():
     '''Display the page to add new items.'''
+    log(f'thumbnailpattern = {_THUMBNAILS_URL_PATTERN}')
     return page('edit', action = 'add', item = None,
-                thumbnails_dir = _THUMBNAILS_DIR,
+                thumbnails_url_pattern = _THUMBNAILS_URL_PATTERN,
                 max_size = naturalsize(_MAX_THUMBNAIL_SIZE))
 
 
 @dibs.get('/edit/<barcode>', apply = VerifyStaffUser())
 def edit_item(barcode):
     '''Display the page to add new items.'''
+    log(f'thumbnailpattern = {_THUMBNAILS_URL_PATTERN}')
     return page('edit', browser_no_cache = True, action = 'edit',
-                thumbnails_dir = _THUMBNAILS_DIR,
+                thumbnails_url_pattern = _THUMBNAILS_URL_PATTERN,
                 max_size = naturalsize(_MAX_THUMBNAIL_SIZE),
                 item = Item.get(Item.barcode == barcode))
 
@@ -468,40 +470,7 @@ def update_item():
         item.save(only = [Item.barcode, Item.num_copies, Item.duration, Item.notes])
         # FIXME if we reduced the number of copies, we need to check loans.
 
-        # Handle replacement thumbnail images if the user chose one.
-        if thumbnail and thumbnail.filename:
-            # We don't seem to get content-length in the headers, so won't know
-            # the size ahead of time.  So, check size, & always convert to jpeg.
-            try:
-                data = b''
-                while (chunk := thumbnail.file.read(1024)):
-                    data += chunk
-                    if len(data) >= _MAX_THUMBNAIL_SIZE:
-                        max_size = naturalsize(_MAX_THUMBNAIL_SIZE)
-                        log(f'file exceeds {max_size} -- ignoring the file')
-                        return page('error', summary = 'cover image is too large',
-                                    message = ('The chosen image is larger than'
-                                               f' the limit of {max_size}.'))
-                dest_file = join(_THUMBNAILS_DIR, barcode + '.jpg')
-                log(f'writing {naturalsize(len(data))} image to {dest_file}')
-                with open(dest_file, 'wb') as new_file:
-                    new_file.write(as_jpeg(data))
-            except Exception as ex:     # noqa: PIE786
-                log(f'exception trying to save thumbnail: {str(ex)}')
-        else:
-            log('user did not provide a new thumbnail image file')
     redirect(f'{dibs.base_url}/list')
-
-
-@dibs.get('/delete-thumbnail/<barcode>', apply = VerifyStaffUser())
-def edit(barcode):
-    '''Delete the current thumbnail image.'''
-    thumbnail_file = join(_THUMBNAILS_DIR, str(barcode) + '.jpg')
-    if exists(thumbnail_file):
-        delete_existing(thumbnail_file)
-    else:
-        log(f'there is no {thumbnail_file}')
-    redirect(f'{dibs.base_url}/edit/{barcode}')
 
 
 @dibs.post('/start-processing', apply = VerifyStaffUser())
@@ -717,10 +686,11 @@ def show_item_info(barcode, person):
         log(f'redirecting {user(person)} to uv for {barcode}')
         redirect(f'{dibs.base_url}/view/{barcode}')
         return
+    log(f'thumbnailpattern = {_THUMBNAILS_URL_PATTERN}')
     return page('item', browser_no_cache = True, item = item,
                 available = (status == Status.AVAILABLE),
                 when_available = human_datetime(when_available),
-                explanation = explanation, thumbnails_dir = _THUMBNAILS_DIR)
+                explanation = explanation, thumbnails_url_pattern = _THUMBNAILS_URL_PATTERN)
 
 
 @dibs.post('/loan', apply = AddPersonArgument())
@@ -983,13 +953,6 @@ def error405(error):
 def favicon():
     '''Return the favicon.'''
     return static_file('favicon.ico', root = 'dibs/static')
-
-
-@dibs.get('/thumbnails/<filename:re:[0-9]+.jpg>', skip = _UNNECESSARY_PLUGINS)
-def thumbnail_file(filename):
-    '''Return a thumbnail image file.'''
-    log(f'returning included file {filename}')
-    return static_file(filename, root = _THUMBNAILS_DIR)
 
 
 @dibs.get('/static/<filename:re:[-a-zA-Z0-9]+.(html|jpg|svg|css|js|json)>',

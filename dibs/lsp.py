@@ -109,15 +109,15 @@ class TindInterface(LSPInterface):
         except Exception:
             log(f'could not find {barcode} in TIND')
             raise ValueError('No such barcode {barcode} in {self.url}')
-
+    
 
 class SolrInterface(LSPInterface):
     '''Interface layer for TIND hosted LSP servers.'''
 
-    def __init__(self, url = None, thumbnails_dir = None):
+    def __init__(self, url = None, thumbnail_url_pattern = None):
         '''Create an interface for the server at "url".'''
         self.url = url
-        self._thumbnails_dir = thumbnails_dir
+        self.thumbnail_url_pattern = thumbnail_url_pattern
         # self.host = "virgo4-solr-staging-replica-1-private.internal.lib.virginia.edu"
         # self.port = "8080"
         # self.collection = "test_core"
@@ -146,7 +146,7 @@ class SolrInterface(LSPInterface):
             issn = doc0.get('issn_a', [''])[0]
             isbn_issn = isbn or issn
             edition = ''
-            url = f'https://search.lib.virginia.edu/items/{barcode}'
+            url = f'https://search.lib.virginia.edu/items/{rec_id}'
             
             log(f'record for {barcode} has id {rec_id} in {self.url}')
             log(f'record for {barcode} has title {title}')
@@ -192,30 +192,16 @@ class SolrInterface(LSPInterface):
             log(f'could not find {barcode} in SOLR')
             raise ValueError('No such barcode {barcode} in {self.url}')
 
-            
+           
 class VirgoAPIInterface(LSPInterface):
     '''Interface layer for TIND hosted LSP servers.'''
 
-    def __init__(self, url = None, urlAuth = None, thumbnails_dir = None):
+    def __init__(self, url = None, urlAuth = None, thumbnail_url_pattern = None):
         '''Create an interface for the server at "url".'''
         self.urlAuth = urlAuth
         self.urlPool = url
-        self._thumbnails_dir = thumbnails_dir
+        self.thumbnail_url_pattern = thumbnail_url_pattern
         self.authKey = None
-
-        # self.host = "virgo4-solr-staging-replica-1-private.internal.lib.virginia.edu"
-        # self.port = "8080"
-        # self.collection = "test_core"
-        # self.qt         = "select"
-        # self.url        = 'https://' + host + ':' + port + '/solr/' + collection + '/' + qt + '?'
-
-        self.fl         = "fl=id,full_title_a,author_a,published_display_a,publisher_name_a,isbn_a,issn_a"
-        self.fq         = "fq=data_source_f:sirsi"
-        self.rows       = "rows=1"
-        self.wt         = "wt=json"
-        self.params     = [ self.fl, self.fq, self.wt, self.rows ] 
-        self.p          = "&".join(self.params)
-
 
     def record(self, barcode = None):
         '''Return a record for the item identified by the "barcode".'''
@@ -252,7 +238,7 @@ class VirgoAPIInterface(LSPInterface):
             log(f'record for {barcode} has suthor {author}')
             log(f'record for {barcode} has year {year}')
             log(f'record for {barcode} has publisher {publisher}')
-
+            thumbnail_url = self._thumbnail_pattern.format(barcode = barcode)
             #thumbnail_file = join(self._thumbnails_dir, barcode + '.jpg')
             # Don't overwrite existing images.
             #if not exists(thumbnail_file):
@@ -271,7 +257,8 @@ class VirgoAPIInterface(LSPInterface):
                                publisher = publisher,
                                year      = year,
                                edition   = edition,
-                               isbn_issn = isbn_issn)
+                               isbn_issn = isbn_issn,
+                               thumbnail_url = thumbnail_url)
             return record
         except Exception as ex:
             log(f'could not find {barcode} in SOLR')
@@ -320,10 +307,14 @@ class VirgoAPIInterface(LSPInterface):
 
             #response = None
             return response
+        except KeyError :
+            log(f'could not find {barcode} in SOLR')
+            raise ValueError('No such barcode {barcode} in {self.url}')
         except Exception as ex:
             log(f'could not find {barcode} in SOLR')
             raise ValueError('No such barcode {barcode} in {self.url}')
 
+           
             
 class FolioInterface(LSPInterface):
     '''Interface layer for FOLIO hosted LSP servers.'''
@@ -403,6 +394,7 @@ class UnconfiguredInterface(LSPInterface):
                          year      = 'LSP not configured',
                          edition   = 'LSP not configured',
                          isbn_issn = '')
+    
 
 
 # Primary exported class.
@@ -447,11 +439,13 @@ class LSP(LSPInterface):
             lsp = TindInterface(url, thumbnails_dir = thumbnails_dir)
         elif lsp_type == 'solr':
             url = config('SOLR_SERVER_URL', section = 'solr')
-            lsp = SolrInterface(url, thumbnails_dir = thumbnails_dir)
+            thumbnails_url = config('THUMBNAIL_URL_PATTERN', section = 'poolapi')
+            lsp = SolrInterface(url, thumbnail_url_pattern = thumbnails_url)
         elif lsp_type == 'poolapi':
             url = config('POOL_URL', section = 'poolapi')
             urlAuth = config('AUTH_URL', section = 'poolapi')
-            lsp = VirgoAPIInterface(url, urlAuth, thumbnails_dir = thumbnails_dir)
+            thumbnails_url = config('THUMBNAIL_URL_PATTERN', section = 'poolapi')
+            lsp = VirgoAPIInterface(url, urlAuth, thumbnail_url_pattern = thumbnails_url)
         else:
             lsp = UnconfiguredInterface()
 
