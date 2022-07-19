@@ -236,7 +236,6 @@ class VirgoAPIInterface(LSPInterface):
             log(f'record for {barcode} has suthor {author}')
             log(f'record for {barcode} has year {year}')
             log(f'record for {barcode} has publisher {publisher}')
-            thumbnail_url = self._thumbnail_pattern.format(barcode = barcode)
             #thumbnail_file = join(self._thumbnails_dir, barcode + '.jpg')
             # Don't overwrite existing images.
             #if not exists(thumbnail_file):
@@ -255,8 +254,7 @@ class VirgoAPIInterface(LSPInterface):
                                publisher = publisher,
                                year      = year,
                                edition   = edition,
-                               isbn_issn = isbn_issn,
-                               thumbnail_url = thumbnail_url)
+                               isbn_issn = isbn_issn)
             return record
         except Exception as ex:
             log(f'could not find {barcode} in SOLR')
