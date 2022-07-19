@@ -114,10 +114,9 @@ class TindInterface(LSPInterface):
 class SolrInterface(LSPInterface):
     '''Interface layer for TIND hosted LSP servers.'''
 
-    def __init__(self, url = None, thumbnail_url_pattern = None):
+    def __init__(self, url = None):
         '''Create an interface for the server at "url".'''
         self.url = url
-        self.thumbnail_url_pattern = thumbnail_url_pattern
         # self.host = "virgo4-solr-staging-replica-1-private.internal.lib.virginia.edu"
         # self.port = "8080"
         # self.collection = "test_core"
@@ -196,11 +195,10 @@ class SolrInterface(LSPInterface):
 class VirgoAPIInterface(LSPInterface):
     '''Interface layer for TIND hosted LSP servers.'''
 
-    def __init__(self, url = None, urlAuth = None, thumbnail_url_pattern = None):
+    def __init__(self, url = None, urlAuth = None):
         '''Create an interface for the server at "url".'''
         self.urlAuth = urlAuth
         self.urlPool = url
-        self.thumbnail_url_pattern = thumbnail_url_pattern
         self.authKey = None
 
     def record(self, barcode = None):
@@ -439,13 +437,11 @@ class LSP(LSPInterface):
             lsp = TindInterface(url, thumbnails_dir = thumbnails_dir)
         elif lsp_type == 'solr':
             url = config('SOLR_SERVER_URL', section = 'solr')
-            thumbnails_url = config('THUMBNAIL_URL_PATTERN', section = 'poolapi')
-            lsp = SolrInterface(url, thumbnail_url_pattern = thumbnails_url)
+            lsp = SolrInterface(url)
         elif lsp_type == 'poolapi':
             url = config('POOL_URL', section = 'poolapi')
             urlAuth = config('AUTH_URL', section = 'poolapi')
-            thumbnails_url = config('THUMBNAIL_URL_PATTERN', section = 'poolapi')
-            lsp = VirgoAPIInterface(url, urlAuth, thumbnail_url_pattern = thumbnails_url)
+            lsp = VirgoAPIInterface(url, urlAuth)
         else:
             lsp = UnconfiguredInterface()
 
