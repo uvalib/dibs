@@ -86,7 +86,7 @@ _FEEDBACK_URL = config('FEEDBACK_URL')
 
 # Where we send users for help.  The default is the DIBS software documentation
 # page, which is assumed to exist even if individual sites don't provide docs.
-_HELP_URL = config('HELP_URL', default = 'https://caltechlibrary.github.io/dibs')
+_HELP_URL = config('HELP_URL', default = 'https://www.library.virginia.edu/askalibrarian')
 
 # If there's a site announcement file, this will be its path.
 _SITE_ANNOUNCEMENT_FILE = join(_SERVER_ROOT, 'site-announcement.html')
