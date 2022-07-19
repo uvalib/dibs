@@ -5,7 +5,7 @@
     <meta http-equiv="Pragma" content="no-cache">
     % include('common/standard-inclusions.tpl')
 
-    <title>List of items currently in Caltech DIBS</title>
+    <title>List of items currently in UVA Library DIBS</title>
 
     <link rel="stylesheet" href="https://unpkg.com/bootstrap-table@1.18.2/dist/bootstrap-table.min.css">
     <script src="https://unpkg.com/bootstrap-table@1.18.2/dist/bootstrap-table.min.js"></script>

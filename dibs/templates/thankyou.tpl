@@ -12,7 +12,7 @@
 
       <div class="container main-container pt-3">
         <h1 class="mx-auto text-center my-3 caltech-color">
-          Thank you for using Caltech DIBS!
+          Thank you for using UVA Library DIBS!
         </h1>
         <p class="mx-auto col-6 my-5 text-center text-info font-italic">
           If you experienced any problems or have any suggestions for

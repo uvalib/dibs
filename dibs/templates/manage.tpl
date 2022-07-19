@@ -5,7 +5,7 @@
     %include('common/standard-inclusions.tpl')
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.0/css/all.css">
 
-    <title>List of items currently in Caltech DIBS</title>
+    <title>List of items currently in UVA Library e reserves</title>
 
     <link rel="stylesheet" href="https://unpkg.com/bootstrap-table@1.18.2/dist/bootstrap-table.min.css">
     <script src="https://unpkg.com/bootstrap-table@1.18.2/dist/bootstrap-table.min.js"></script>

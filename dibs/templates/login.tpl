@@ -3,7 +3,7 @@
   %include('common/banner.html')
   <head>
     %include('common/standard-inclusions.tpl')
-    <title>Welcome to Caltech DIBS</title>
+    <title>Welcome to UVA Library DIBS</title>
   </head>
   
   <body>
@@ -14,12 +14,12 @@
         <div class="row pt-3">
           <div class="col">
             <h1 class="mx-auto text-center caltech-color">
-              Welcome to Caltech DIBS
+              Welcome to UVA Library DIBS
             </h1>
             <h2 class="mx-auto my-3 text-center text-info font-italic">
-              The Caltech <strong>Di</strong>gital <strong>B</strong>orrowing <strong>S</strong>ystem
+              The UVA Library <strong>Di</strong>gital <strong>B</strong>orrowing <strong>S</strong>ystem
             </h2>
-            <p class="pt-3 w-100"><strong>Caltech DIBS</strong> is an implementation of <a target="_blank" href="https://controlleddigitallending.org">Controlled Digital Lending</a>, allowing members of Caltech to borrow materials that are not otherwise available in e-book or other electronic formats.  The system was implemented in the year 2021 to help Caltech students and faculty during the global <a target="_blank" href="https://www.who.int/emergencies/diseases/novel-coronavirus-2019">COVID-19 pandemic.</a> Access to materials in Caltech DIBS is limited to current Caltech faculty, students and staff.</p>
+            <p class="pt-3 w-100"><strong>Caltech DIBS</strong> is an implementation of <a target="_blank" href="https://controlleddigitallending.org">Controlled Digital Lending</a>, allowing members of Caltech to borrow materials that are not otherwise available in e-book or other electronic formats.  The system was implemented in the year 2021 to help Caltech students and faculty during the global <a target="_blank" href="https://www.who.int/emergencies/diseases/novel-coronavirus-2019">COVID-19 pandemic, and is being piloted as af August 2022 by UVA Library.</a> Access to materials in UVA Library e reserves is limited to current UVA faculty, students and staff enrolled in participating courses.</p>
           </div>
         </div>
         <div class="row pt-2 mx-auto text-center">
