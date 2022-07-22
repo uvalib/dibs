@@ -14,7 +14,6 @@ from   datetime import datetime as dt
 from   datetime import timedelta
 from dateutil import tz
 
-
 # Exported functions.
 # .............................................................................
 
