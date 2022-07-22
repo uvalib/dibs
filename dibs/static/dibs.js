@@ -150,4 +150,8 @@ if (!inIframe()) {
     // add module imports
     addModuleScript("https://unpkg.internal.lib.virginia.edu/v0.0.4/uvalib-footer.js");
     addModuleScript("https://unpkg.internal.lib.virginia.edu/v0.0.4/uvalib-header.js");
+    document.addEventListener("DOMContentLoaded", function(event) { 
+      const navbar = document.querySelector('.navbar')
+      if (navbar) navbar.removeAttribute('hidden');
+    });
 }
