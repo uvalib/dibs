@@ -183,7 +183,7 @@
                log("Book {{item.barcode}} is available");
                loanButton.classList.remove('d-none');
                loanButton.removeAttribute('disabled');
-               loanButton.setAttribute('value', 'Get loan');
+               loanButton.setAttribute('value', 'Begin loan now');
                loanButton.classList.add('btn-primary');
                loanButton.classList.remove('btn-secondary');
                availableElement.innerHTML = 'This item is available '
