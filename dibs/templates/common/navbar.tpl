@@ -8,7 +8,7 @@
 </div>
 %end
 <!-- Nav bar. -->
-<nav class="navbar navbar-light bg-light">
+<nav class="navbar navbar-light bg-light" hidden>
   <a href="{{base_url}}/">
     <img src="{{base_url}}/static/dibs-icon.svg" height="40rem">
   </a>
