@@ -59,7 +59,7 @@
    }
 
    function maybeEndLoan() {
-     if (confirm('This will end your loan immediately. You will need to wait '
+     if (confirm('Are you sure you’re ready to end your loan? You will need to wait '
                + '{{wait_time}} before borrowing this item again.')) {
 
        var form = document.createElement('form');
