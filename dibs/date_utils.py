@@ -12,6 +12,7 @@ file "LICENSE" for more information.
 import arrow
 from   datetime import datetime as dt
 from   datetime import timedelta
+from dateutil import tz
 
 
 # Exported functions.
@@ -21,7 +22,10 @@ def human_datetime(value, date_format = "%I:%M %p (%Z) on %Y-%m-%d"):
     '''Return a human-friendly string for the given datetime in local time.'''
     if not value:
         return ''
-    time = arrow.get(value).to('local').strftime(date_format)
+
+    to_zone = tz.gettz('America/New_York')
+    # time = arrow.get(value).to('local').strftime(date_format)
+    time = arrow.get(value).astimezone(to_zone).strftime(date_format)
     # Stftime has no option to *not* zero-pad the numbers, so we have to do it:
     return time.lstrip('0')
 
