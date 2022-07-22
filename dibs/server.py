@@ -82,7 +82,7 @@ _RELOAN_WAIT_TIME = (delta(minutes = 1) if ('BOTTLE_CHILD' in os.environ)
                      else delta(minutes = int(config('RELOAN_WAIT_TIME'))))
 
 # Where we send users to give feedback.
-_FEEDBACK_URL = config('FEEDBACK_URL')
+_FEEDBACK_URL = config('FEEDBACK_URL', default = 'https://search.lib.virginia.edu/feedback')
 
 # Where we send users for help.  The default is the DIBS software documentation
 # page, which is assumed to exist even if individual sites don't provide docs.
