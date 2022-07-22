@@ -113,13 +113,11 @@
 
             <div class="mx-auto text-center w-100">
               <form action="{{base_url}}/loan" method="POST"
-                    onSubmit="return confirm('This will start your {{item.duration}} '
-                                           + 'hour loan period immediately.'
-                                           + '\n\nReminder: closing the viewer window '
-                                           + 'will not end the loan  – please use the '
-                                           + 'End Loan button when you are ready.'
-                                           + '\n\nYou may open the viewer in other '
-                                           + 'devices during the loan period.');">
+                    onSubmit="return confirm('Clicking the button below will start your {{item.duration}} '
+                                           + 'hour loan period.'
+                                           + '\n\nClosing the viewer '
+                                           + 'will not end the loan, and you may open the viewer in other devices during the loan period.\n\n'
+                                           + 'When you're finished with the item, please use the "End loan" button to end your loan.');">
                 <input type="hidden" name="barcode" value="{{item.barcode}}"/>
                 <input id="loan-button"
                        class="d-none btn mb-3"
