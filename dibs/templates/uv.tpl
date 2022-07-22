@@ -94,7 +94,7 @@
      const buttonElement = document.createElement('div');
      buttonElement.setAttribute('id', id);
      const html = '<button type="button" class="end-loan-button btn-danger"'
-                + ' onclick="maybeEndLoan();">End loan</button>';
+                + ' onclick="maybeEndLoan();">End loan now</button>';
      buttonElement.innerHTML = html;
      return buttonElement;
    }
