@@ -3,8 +3,15 @@
 #
 FROM public.ecr.aws/ubuntu/ubuntu:22.04_stable
 
+# for tzdata package
+ENV DEBIAN_FRONTEND noninteractive
+
 # update the packages
-RUN apt -y update && apt -y upgrade && apt -y install apache2 vim python3-pip && apt -y install apache2-dev apache2-utils libapache2-mod-wsgi-py3
+RUN apt -y update && apt -y upgrade && apt -y install tzdata apache2 vim python3-pip && apt -y install apache2-dev apache2-utils libapache2-mod-wsgi-py3
+
+# set the timezone appropriatly
+ENV TZ=EST5EDT
+RUN cp /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 # install the application requirements
 COPY requirements.txt /tmp/requirements.txt
