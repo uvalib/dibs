@@ -265,12 +265,17 @@ class VirgoAPIInterface(LSPInterface):
         try:
             ''' get authorization key '''
             values = {}
+            log(f'Getting authorization key from {self.urlAuth}')
             data = urllib.parse.urlencode(values).encode("utf-8")
             authConnection = urllib.request.urlopen(url=self.urlAuth, data=data)
-            log(f'response {authConnection}')
+            status = authConnection.status
+            log(f'status = {status}')
             self.authKey = authConnection.read()
-                
+            authKeyStr = str(self.authKey, "utf-8")
+            log(f'authKey = {authKeyStr}')
+    
             ''' use authorization key to do search by barcode '''
+            log(f'submitting query for barcode {barcode} to URL {self.urlPool}')
             args = f'{{"query":"identifier: {{{barcode}}}","pagination":{{"start":0,"rows":10}},"filters":[]}}'
             headers = dict( [ 
                 [ "Authorization", f'Bearer {str(self.authKey, "utf-8")}' ],
@@ -283,7 +288,7 @@ class VirgoAPIInterface(LSPInterface):
             log(f'data {request.data}')
             log(f'search_url {search_url}')
             connection = urllib.request.urlopen(request)
-            log(f'response {connection}')
+            log(f'status = {connection.status}')
             response = simplejson.load(connection)
             lod = response["group_list"][0]["record_list"][0]["fields"]
             ididx = None 
@@ -294,11 +299,12 @@ class VirgoAPIInterface(LSPInterface):
             
             ''' use catkey to get item data '''
             ''' curl -vv -X GET "https://pool-solr-ws-uva-library.internal.lib.virginia.edu/api/resource/u2915688" -H "Content-Type: application/json" -H "Authorization: Bearer $AUTH_TOKEN"'''
+            log(f'submitting request for resource {idval} to URL {self.urlPool}')
             item_url = self.urlPool+'/resource/'+idval
             log(f'item_url {item_url}')
             request = urllib.request.Request(url = item_url, data = None, headers = headers, method = "GET")
             connection = urllib.request.urlopen(request)
-            log(f'response {connection}')
+            log(f'status = {connection.status}')
             response = simplejson.load(connection)
 
             #response = None
@@ -307,7 +313,8 @@ class VirgoAPIInterface(LSPInterface):
             log(f'could not find {barcode} in SOLR')
             raise ValueError('No such barcode {barcode} in {self.url}')
         except Exception as ex:
-            log(f'could not find {barcode} in SOLR')
+            exceptionMessage = repr(ex)
+            log(f'exceptionMessage {exceptionMessage}')
             raise ValueError('No such barcode {barcode} in {self.url}')
 
            
