@@ -59,7 +59,7 @@ def send_email(user, item, start, end, base_url):
                              user      = email,
                              subject   = subject,
                              sender    = config('MAIL_SENDER'),
-                             feedback  = 'https://search.lib.virginia.edu/feedback') #config('FEEDBACK_URL', default = ''))
+                             feedback  = 'https://search.lib.virginia.edu/feedback?url=https%3A%2F%2Freserves.library.virginia.edu') #config('FEEDBACK_URL', default = ''))
         log(f'sending mail to {anon(email)} about loan of {item.barcode}')
         mailer  = smtplib.SMTP(config('MAIL_HOST'))
         mailer.sendmail(config('MAIL_SENDER'), [email], body)
