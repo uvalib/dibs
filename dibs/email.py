@@ -25,19 +25,19 @@ _EMAIL = '''From: {sender}
 To: {user}
 Subject: {subject}
 
-You started a digital loan through DIBS at {start}.
+You started a digital loan through The University of Virginia Library at {start}.
 
   Title: {item.title}
   Author: {item.author}
 
-  The loan period ends at {end}
+  The loan period ends at {end} or when you click the "End Loan" button, whichever is first.
   Link to web viewer: {viewer}
 
-Please note that DIBS only functions in web browsers that support JavaScript. DIBS is safe to use with JavaScript enabled in your browser and does not contain trackers or advertisements of any kind.
+Please note that UVA Library's digital loan service only functions in web browsers that support JavaScript. UVA Library's digital loan service is safe to use with JavaScript enabled in your browser and does not contain trackers or advertisements of any kind.
 
 Information about loan policies can be found at {info_page}
 
-We hope your experience with DIBS is a pleasant one. Don't hesitate to send us feedback, and please report any problems. You can do it directly via email to {sender} or using our anonymous feedback form at {feedback}
+We hope your experience with UVA Library's digital loan service is a pleasant one. Don't hesitate to send us feedback, and please report any problems. You can do it directly via email to {sender} or using our anonymous feedback form at {feedback}
 '''
 
 
