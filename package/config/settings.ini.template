@@ -148,5 +148,10 @@ AUTH_URL = ${AUTH_URL:-http://unconfigured.edu/authorize}
 POOL_URL = ${POOL_URL:-http://unconfigured.edu/api}
 
 #
+# used to update the item status via the ils-connector
+#
+STATUS_URL = ${STATUS_URL:-http://unconfigured.edu/}
+
+#
 # end of file
 #
