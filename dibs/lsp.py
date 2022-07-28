@@ -68,6 +68,11 @@ class LSPInterface(ABC):
         '''Return a record for the item identified by the "barcode".'''
         pass                            # noqa: PIE790
 
+    @abstractmethod
+    def setstatus(self, barcode = None, ready = True):
+        '''Return a record for the item identified by the "barcode".'''
+        pass                            # noqa: PIE790
+
 
 class TindInterface(LSPInterface):
     '''Interface layer for TIND hosted LSP servers.'''
@@ -195,10 +200,11 @@ class SolrInterface(LSPInterface):
 class VirgoAPIInterface(LSPInterface):
     '''Interface layer for TIND hosted LSP servers.'''
 
-    def __init__(self, url = None, urlAuth = None):
+    def __init__(self, url = None, urlAuth = None, urlStatus = None):
         '''Create an interface for the server at "url".'''
         self.urlAuth = urlAuth
         self.urlPool = url
+        self.urlStatus = urlStatus
         self.authKey = None
 
     def record(self, barcode = None):
@@ -264,20 +270,11 @@ class VirgoAPIInterface(LSPInterface):
         '''perform search on solr looking for item with barcode "barcode".'''
         try:
             ''' get authorization key '''
-            values = {}
-            log(f'Getting authorization key from {self.urlAuth}')
-            data = urllib.parse.urlencode(values).encode("utf-8")
-            authConnection = urllib.request.urlopen(url=self.urlAuth, data=data)
-            status = authConnection.status
-            log(f'status = {status}')
-            self.authKey = authConnection.read()
-            authKeyStr = str(self.authKey, "utf-8")
-            log(f'authKey = {authKeyStr}')
-    
+            self.getAuthKey()
             ''' use authorization key to do search by barcode '''
             log(f'submitting query for barcode {barcode} to URL {self.urlPool}')
             args = f'{{"query":"identifier: {{{barcode}}}","pagination":{{"start":0,"rows":10}},"filters":[]}}'
-            headers = dict( [ 
+            headers = dict( [
                 [ "Authorization", f'Bearer {str(self.authKey, "utf-8")}' ],
                 [ "Content-Type", "application/json" ]
                 ] )
@@ -315,10 +312,49 @@ class VirgoAPIInterface(LSPInterface):
         except Exception as ex:
             exceptionMessage = repr(ex)
             log(f'exceptionMessage {exceptionMessage}')
-            raise ValueError('No such barcode {barcode} in {self.url}')
+            raise ex
 
-           
-            
+    def setstatus(self, barcode = None, ready = True):
+        '''perform search on solr looking for item with barcode "barcode".'''
+        try:
+            if (self.urlStatus != None):
+                ''' get authorization key '''
+                self.getAuthKey()
+                ''' use authorization key to do search by barcode '''
+                log(f'submitting query for barcode {barcode} to URL {self.urlPool}')
+
+                headers = dict( [
+                    [ "Authorization", f'Bearer {str(self.authKey, "utf-8")}' ],
+                    [ "Content-Type", "application/json" ]
+                    ] )
+                dibsstr = 'dibs' if ready else 'nodibs'
+                status_url = self.urlStatus+'/v4/requests/'+dibsstr+'/'+barcode
+                request = urllib.request.Request(url = status_url, headers = headers, method = "PUT")
+                log(f'headers {request.headers}')
+                log(f'set_status_url {status_url}')
+                connection = urllib.request.urlopen(request)
+                log(f'status = {connection.status}')
+        except KeyError :
+            log(f'could not find {barcode} in SOLR')
+            raise ValueError('No such barcode {barcode} in {self.url}')
+        except Exception as ex:
+            exceptionMessage = repr(ex)
+            log(f'exceptionMessage {exceptionMessage}')
+            raise ex
+
+    def getAuthKey(self):
+            ''' get authorization key '''
+            values = {}
+            log(f'Getting authorization key from {self.urlAuth}')
+            data = urllib.parse.urlencode(values).encode("utf-8")
+            authConnection = urllib.request.urlopen(url=self.urlAuth, data=data)
+            status = authConnection.status
+            log(f'status = {status}')
+            self.authKey = authConnection.read()
+            authKeyStr = str(self.authKey, "utf-8")
+            log(f'authKey = {authKeyStr}')
+
+
 class FolioInterface(LSPInterface):
     '''Interface layer for FOLIO hosted LSP servers.'''
 
@@ -446,7 +482,8 @@ class LSP(LSPInterface):
         elif lsp_type == 'poolapi':
             url = config('POOL_URL', section = 'poolapi')
             urlAuth = config('AUTH_URL', section = 'poolapi')
-            lsp = VirgoAPIInterface(url, urlAuth)
+            urlStatus = config('STATUS_URL', default = None, section = 'poolapi')
+            lsp = VirgoAPIInterface(url, urlAuth, urlStatus)
         else:
             lsp = UnconfiguredInterface()
 

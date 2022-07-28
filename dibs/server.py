@@ -500,6 +500,8 @@ def toggle_ready():
         item.save(only = [Item.ready])
         # If we are removing readiness, we may have to close outstanding
         # loans.  Doesn't matter if these are active or recent loans.
+        lsp = LSP()
+        lsp.setstatus(barcode, item.ready)
         if not item.ready:
             for loan in Loan.select().where(Loan.item == item):
                 # Don't count staff users in loan stats except in debug mode.
