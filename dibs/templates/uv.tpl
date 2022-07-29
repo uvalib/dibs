@@ -154,7 +154,7 @@
      var now = new Date( Date().toLocaleString('en-US', {timeZone: 'US/Eastern'}) ).getTime()
      var end = new Date("{{js_end_time}}").getTime();
      var timeout = (end - now) + 1000;
-     console.info("set to timeout in "+str(timeout/1000)+" seconds");
+     console.info("set to timeout in "+(timeout/1000).toString()+" seconds");
      setTimeout(() => { window.location.reload(); }, timeout);
    }, false);
 
