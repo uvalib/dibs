@@ -48,7 +48,7 @@ def send_email(user, item, start, end, base_url):
     try:
         # our SSO users are not email addresses as assumed here so we make a real email address
         email = f'{user}@virginia.edu'
-        subject = f'DIBS loan for "{item.title}"'
+        subject = f'Digital loan for "{item.title}"'
         viewer = f'https://search.lib.virginia.edu/sources/uva_library/items/{item.barcode}' #f'{base_url}/view/{item.barcode}'
         info_page = f'{base_url}/info'
         body = _EMAIL.format(item     = item,
