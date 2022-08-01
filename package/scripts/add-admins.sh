@@ -8,10 +8,12 @@ admin/people-manager add role="library" uname="cma4u"   # Carla Arton
 admin/people-manager add role="library" uname="dpg3k"   # Dave Goldstein
 admin/people-manager add role="library" uname="jlk4p"   # Jack Kelly
 admin/people-manager add role="library" uname="jw6t"    # Jeremy Wilk
+admin/people-manager add role="library" uname="lab6u"   # Laura Kelly
 admin/people-manager add role="library" uname="md5wz"   # Mike Durbin
 admin/people-manager add role="library" uname="mhw8m"   # Mark Witteman
 admin/people-manager add role="library" uname="naw4t"   # Nestor Walker
 admin/people-manager add role="library" uname="rar6u"   # Renee Reighart
+admin/people-manager add role="library" uname="sej3f"   # Susan Bryant
 
 # ensure permissions
 admin/set-server-permissions --owner www-data --group www-data
