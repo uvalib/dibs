@@ -117,7 +117,7 @@
                                            + 'hour loan period.'
                                            + '\n\nClosing the viewer '
                                            + 'will not end the loan, and you may open the viewer in other devices during the loan period.\n\n'
-                                           + 'When you\'re finished with the item, please use the \"End loan now\" button to end your loan.');">
+                                           + 'When you\'re finished with the item, please use the &#34;End loan now&#34; button to end your loan.');">
                 <input type="hidden" name="barcode" value="{{item.barcode}}"/>
                 <input id="loan-button"
                        class="d-none btn mb-3"
