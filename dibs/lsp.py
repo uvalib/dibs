@@ -327,8 +327,8 @@ class VirgoAPIInterface(LSPInterface):
                     [ "Authorization", f'Bearer {str(self.authKey, "utf-8")}' ],
                     [ "Content-Type", "application/json" ]
                     ] )
-                dibsstr = 'dibs' if ready else 'nodibs'
-                status_url = self.urlStatus+'/v4/requests/'+dibsstr+'/'+barcode
+                dibsstr = 'indibs' if ready else 'nodibs'
+                status_url = self.urlStatus+'/v4/dibs/'+dibsstr+'/'+barcode
                 request = urllib.request.Request(url = status_url, headers = headers, method = "PUT")
                 log(f'headers {request.headers}')
                 log(f'set_status_url {status_url}')
