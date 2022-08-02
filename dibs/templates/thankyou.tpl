@@ -12,14 +12,12 @@
 
       <div class="container main-container pt-3">
         <h1 class="mx-auto text-center my-3 caltech-color">
-          Thank you for using UVA Library DIBS!
+          Thank you!
         </h1>
         <p class="mx-auto col-6 my-5 text-center text-info font-italic">
-          If you experienced any problems or have any suggestions for
-          this service, please let us know!
           %if feedback_url:
-          You can use our simple <a href="{{feedback_url}}">
-          <nobr>feedback form</nobr></a>.
+          If you experienced any problems or have any suggestions for
+          this service, please <a href="{{feedback_url}}">use our feedback form</a> to let us know.
           %end
         </p>
       </div>
