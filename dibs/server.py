@@ -496,12 +496,17 @@ def toggle_ready():
     item = Item.get(Item.barcode == barcode)
     item.ready = not item.ready
     log(f'locking db to change {barcode} ready to {item.ready}')
+    try: 
+        lsp = LSP()
+        lsp.setstatus(barcode, item.ready)
+    except ValueError as vex:
+        return page('error', summary = 'Setting status in Sirsi',
+                        message = (f'{str(vex)}'))
     with database.atomic('immediate'):
         item.save(only = [Item.ready])
         # If we are removing readiness, we may have to close outstanding
         # loans.  Doesn't matter if these are active or recent loans.
-        lsp = LSP()
-        lsp.setstatus(barcode, item.ready)
+
         if not item.ready:
             for loan in Loan.select().where(Loan.item == item):
                 # Don't count staff users in loan stats except in debug mode.

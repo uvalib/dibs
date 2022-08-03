@@ -20,6 +20,7 @@ import re
 from   sidetrack import log
 from   textwrap import wrap
 from   topi import Tind
+from urllib.error import HTTPError
 
 from .settings import config, resolved_path
 import urllib.request
@@ -321,7 +322,7 @@ class VirgoAPIInterface(LSPInterface):
                 ''' get authorization key '''
                 self.getAuthKey()
                 ''' use authorization key to do search by barcode '''
-                log(f'submitting query for barcode {barcode} to URL {self.urlPool}')
+                log(f'setting status for {barcode} to URL {self.urlStatus}')
 
                 headers = dict( [
                     [ "Authorization", f'Bearer {str(self.authKey, "utf-8")}' ],
@@ -334,9 +335,11 @@ class VirgoAPIInterface(LSPInterface):
                 log(f'set_status_url {status_url}')
                 connection = urllib.request.urlopen(request)
                 log(f'status = {connection.status}')
-        except KeyError :
-            log(f'could not find {barcode} in SOLR')
-            raise ValueError('No such barcode {barcode} in {self.url}')
+        except HTTPError as ex:
+            log(f'Error setting status for {barcode} in Sirsi')
+            log(f'status is {ex.status}')
+            log(f'message is {ex.msg}')
+            raise ValueError(f'{ex.status} {ex.msg} setting status for {barcode} in Sirsi'  )
         except Exception as ex:
             exceptionMessage = repr(ex)
             log(f'exceptionMessage {exceptionMessage}')
