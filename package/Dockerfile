@@ -41,6 +41,10 @@ COPY package/config/dibs.conf /etc/apache2/conf-available/dibs.conf
 RUN ln -s /etc/apache2/conf-available/dibs.conf /etc/apache2/conf-enabled
 RUN rm /etc/apache2/sites-available/*.conf
 
+# Add the build tag
+ARG BUILD_TAG
+RUN test -n "$BUILD_TAG" && touch $APP_HOME/buildtag.build-$BUILD_TAG || touch $APP_HOME/buildtag.build-0
+
 #
 # end of file
 #
