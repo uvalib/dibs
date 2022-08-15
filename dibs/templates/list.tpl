@@ -110,25 +110,10 @@
                              {{'checked="checked"' if item.ready else ''}}/>
                     </form>
                     %   else:
-                    <form action="{{base_url}}/start-processing" method="POST">
-                      <input type="hidden" name="barcode" value="{{item.barcode}}"/>
-                      <input type="submit" name="process" value="Process"
-                             class="btn btn-primary btn-sm"/>
-                    </form>
-                    %   end
-                    % else:
                     %   # If the process dir scheme is not being used, show a
                     %   # missing file icon until the manifest appears.
                     %
-                    %   if manifest_exists:
-                    <form action="{{base_url}}/ready" method="POST">
-                      <input type="hidden" name="barcode" value="{{item.barcode}}">
-                      <input type="checkbox" class="checkbox"
-                             onChange="this.form.submit()"
-                             {{'checked="checked"' if item.ready else ''}}/>
-                    </form>
-                    %   else:
-                    <span class="fa-stack fa-2x">
+                     <span class="fa-stack fa-2x">
                       <i title="Manifest file is not available."
                          class="fas fa-slash fa-stack-1x text-secondary"></i>
                       <i title="Manifest file is not available."
