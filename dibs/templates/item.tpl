@@ -104,47 +104,8 @@
 
         <div class="row d-flex justify-content-center">
           <div class="loan-info mt-5 px-3">
-<style>
-.uva-alert__body {
-    padding-left: 1.25rem;
-    display: table-cell;
-    vertical-align: top;
-}
-.uva-alert__body {
-    padding-left: 1.25rem;
-    display: table-cell;
-    vertical-align: top;
-}
-.uva-alert__text {
-    margin-bottom: 0;
-    margin-top: 0;
-}
-.uva-alert__text, .uva-alert__text p {
-    margin-bottom: 0;
-    margin-top: 0;
-}
-.uva-alert--r2 {
-    background-color: var(--uvalib-teal-lightest);
-    --alert-border-color: var(--uvalib-teal);
-}
-.uva-alert--r1, .uva-alert--r2 {
-    border: 0.2em solid var(--alert-border-color);
-    border-radius: 0.5em;
-    padding: 0.75rem 1rem;
-    margin-bottom: 1rem;
-}
-.uva-alert {
-    font-size: 1.06rem;
-    line-height: 1.5;
-    position: relative;
-    color: var(--uvalib-text-dark);
-}
-</style>
-<div class="copyright uva-alert uva-alert--r2">
-              <div class="uva-alert__body">
-                <p class="uva-alert__text">The copyright law of the United States (title 17, United States Code) governs the making of photocopies or other reproductions of copyrighted material. Under certain conditions specified in the law, libraries and archives are authorized to furnish a photocopy or other reproduction. One of these specific conditions is that the photocopy or reproduction is not to be “used for any purpose other than private study, scholarship, or research.” The library has utilized technical measures to prevent any further copying, downloading, or distribution of this work. Use of this reproduction in violation of these terms could subject users to potential liability for copyright infringement.</p>
-              </div>
-            </div>
+
+            <p class="copyright"><strong style="color:var(--uvalib-red)">Copyright Notice:</strong> The copyright law of the United States (title 17, United States Code) governs the making of photocopies or other reproductions of copyrighted material. Under certain conditions specified in the law, libraries and archives are authorized to furnish a photocopy or other reproduction. One of these specific conditions is that the photocopy or reproduction is not to be “used for any purpose other than private study, scholarship, or research.” The library has utilized technical measures to prevent any further copying, downloading, or distribution of this work. Use of this reproduction in violation of these terms could subject users to potential liability for copyright infringement.</p>
             <p class="mx-auto text-center w-100 pt-3">
               <span id="available">This item is currently not available
                 to you for a digital loan.</span>
