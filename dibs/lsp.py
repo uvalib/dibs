@@ -20,7 +20,9 @@ import re
 from   sidetrack import log
 from   textwrap import wrap
 from   topi import Tind
-from urllib.error import HTTPError
+from urllib.error import HTTPError, URLError
+import jwt
+from datetime import datetime, timedelta
 
 from .settings import config, resolved_path
 import urllib.request
@@ -201,9 +203,10 @@ class SolrInterface(LSPInterface):
 class VirgoAPIInterface(LSPInterface):
     '''Interface layer for TIND hosted LSP servers.'''
 
-    def __init__(self, url = None, urlAuth = None, urlStatus = None):
+    def __init__(self, url = None, urlAuth = None, urlStatus = None, secret = None):
         '''Create an interface for the server at "url".'''
         self.urlAuth = urlAuth
+        self.secret = secret
         self.urlPool = url
         self.urlStatus = urlStatus
         self.authKey = None
@@ -271,12 +274,12 @@ class VirgoAPIInterface(LSPInterface):
         '''perform search on solr looking for item with barcode "barcode".'''
         try:
             ''' get authorization key '''
-            self.getAuthKey()
+            self.getGuestAuthKey()
             ''' use authorization key to do search by barcode '''
             log(f'submitting query for barcode {barcode} to URL {self.urlPool}')
             args = f'{{"query":"identifier: {{{barcode}}}","pagination":{{"start":0,"rows":10}},"filters":[]}}'
             headers = dict( [
-                [ "Authorization", f'Bearer {str(self.authKey, "utf-8")}' ],
+                [ "Authorization", f'Bearer {self.authKey}' ],
                 [ "Content-Type", "application/json" ]
                 ] )
             argsdata = args.encode("utf-8")
@@ -320,12 +323,12 @@ class VirgoAPIInterface(LSPInterface):
         try:
             if (self.urlStatus != None):
                 ''' get authorization key '''
-                self.getAuthKey()
+                self.getGuestAuthKey()
                 ''' use authorization key to do search by barcode '''
                 log(f'setting status for {barcode} to URL {self.urlStatus}')
 
                 headers = dict( [
-                    [ "Authorization", f'Bearer {str(self.authKey, "utf-8")}' ],
+                    [ "Authorization", f'Bearer {self.authKey}' ],
                     [ "Content-Type", "application/json" ]
                     ] )
                 dibsstr = 'indibs' if ready else 'nodibs'
@@ -345,17 +348,73 @@ class VirgoAPIInterface(LSPInterface):
             log(f'exceptionMessage {exceptionMessage}')
             raise ex
 
-    def getAuthKey(self):
+    def checkout_item(self, barcode = None, username = None, checkout = True, duration = 0):
+        '''perform search on solr looking for item with barcode "barcode".'''
+        try:
+            if (self.urlStatus != None):
+                ''' get authorization key '''
+                self.getAuthKeyForPerson(username = username)
+                ''' use authorization key to do search by barcode '''
+                log(f'sending checkout request to Sirsi for barcode {barcode} for user {username}')
+                args = f'{{"duration": "{duration}", "user_id" : "{username}", "barcode" : "{barcode}"}}'
+                argsdata = args.encode("utf-8")
+
+                headers = dict( [
+                    [ "Authorization", f'Bearer {self.authKey}' ],
+                    [ "Content-Type", "application/json" ]
+                    ] )
+                checkoutstr = 'checkout' if checkout else 'checkin'
+                status_url = self.urlStatus+'/v4/dibs/'+checkoutstr
+                request = urllib.request.Request(url = status_url, data = argsdata, headers = headers, method = "POST")
+                log(f'headers {request.headers}')
+                log(f'checkout item url is {status_url}')
+                connection = urllib.request.urlopen(request)
+                log(f'status = {connection.status}')
+                return (True)
+        except HTTPError as ex:
+            log(f'Error performing {checkoutstr} for {barcode} in Sirsi')
+            log(f'status is {ex.status}')
+            log(f'message is {ex.msg}')
+            raise ValueError(f'{ex.status} {ex.msg} performing {checkoutstr} for {barcode} in Sirsi'  )
+        except URLError as ex:
+            log(f'Error performing {checkoutstr} for {barcode} in Sirsi')
+            log(f'message is {ex.reason.strerror}')
+            raise ValueError(f'{ex.reason.strerror} performing {checkoutstr} for {barcode} in Sirsi'  )
+        except Exception as ex:
+            exceptionMessage = repr(ex)
+            log(f'exceptionMessage {exceptionMessage}')
+            raise ex
+
+    def getGuestAuthKey(self):
             ''' get authorization key '''
-            values = {}
-            log(f'Getting authorization key from {self.urlAuth}')
-            data = urllib.parse.urlencode(values).encode("utf-8")
-            authConnection = urllib.request.urlopen(url=self.urlAuth, data=data)
-            status = authConnection.status
-            log(f'status = {status}')
-            self.authKey = authConnection.read()
-            authKeyStr = str(self.authKey, "utf-8")
-            log(f'authKey = {authKeyStr}')
+            if (self.secret != None):
+                expirationTime = int((datetime.now() + timedelta(minutes=20)).timestamp())
+                values =  {'userId': 'anonymous', 'isUva': False, 'homeLibrary': '', 'profile': '', 'canPurchase': False, 'canLEO': False, 'canLEOPlus': False, 'canPlaceReserve': False, 'useSIS': False, 'role': 'guest', 'authMethod': 'none', 'exp': f'{expirationTime}', 'iss': 'v4'}
+                log(f'Getting authorization key from {self.urlAuth}')
+                data = urllib.parse.urlencode(values).encode("utf-8")
+                log(f'Building authorization key using jwt encode')
+                self.authKey = jwt.encode(values, self.secret, algorithm="HS256")
+                log(f'authKey = {self.authKey}')
+            elif (self.urlAuth != None) :
+                authConnection = urllib.request.urlopen(url=self.urlAuth, data=data)
+                status = authConnection.status
+                log(f'status = {status}')
+                authKeyBytes = authConnection.read()
+                self.authKey = str(authKeyBytes, "utf-8")
+                log(f'authKey = {self.authKey}')
+            else :
+                self.authKey = None
+                
+    def getAuthKeyForPerson(self, username = None):
+            ''' build authorization key '''
+            if (username != None and self.secret != None):
+                expirationTime = int((datetime.now() + timedelta(minutes=20)).timestamp())
+                values = {"iss" : "v4", "userId" : f'{username}', "exp" : expirationTime}
+                log(f'Building authorization key for user {username} using jwt encode')
+                self.authKey = jwt.encode(values, self.secret, algorithm="HS256")
+                log(f'authKey = {self.authKey}')
+            else :
+                self.authKey = None    
 
 
 class FolioInterface(LSPInterface):
@@ -486,7 +545,8 @@ class LSP(LSPInterface):
             url = config('POOL_URL', section = 'poolapi')
             urlAuth = config('AUTH_URL', section = 'poolapi')
             urlStatus = config('STATUS_URL', default = None, section = 'poolapi')
-            lsp = VirgoAPIInterface(url, urlAuth, urlStatus)
+            secret = kwds.get("secret", None)
+            lsp = VirgoAPIInterface(url, urlAuth, urlStatus, secret)
         else:
             lsp = UnconfiguredInterface()
 

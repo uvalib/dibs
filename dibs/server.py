@@ -32,6 +32,7 @@ from   sidetrack import log
 from   str2bool import str2bool
 from   textwrap import shorten
 from   trinomial import anon
+import jwt
 
 from . import __version__
 from .data_models import database, Item, Loan, History, Person
@@ -242,6 +243,17 @@ class LoanExpirer(BottlePluginBase):
                         History.create(type = 'loan', what = barcode,
                                        start_time = loan.start_time,
                                        end_time = loan.end_time)
+                        try :
+                            lsp = LSP(secret = request.environ.get("JWT_KEY", "nokey"))
+                            lsp.checkout_item(barcode = barcode, username = loan.user, checkout = False, duration = 0)
+                            log(f'Sending checkin request to Sirsi for barcode {barcode} succeeded!')
+                        except ValueError as vex:
+                            log(f'Sending checkin request to Sirsi failed with '
+                                f'error code and message {str(vex)} ')
+                            '''redirect('error', summary = 'Error returned from Sirsi for checkin action ',
+                                    message = (f'The item with barcode {barcode} returned error'
+                                   ' {str(vex)}')) '''
+
             return callback(*args, **kwargs)
 
         return loan_expirer
@@ -365,7 +377,8 @@ def logout():
         redirect('/')
 
 
-@dibs.get('/list', apply = VerifyStaffUser())
+'''@dibs.get('/list', apply = VerifyStaffUser())'''
+@dibs.get('/list', apply = AddPersonArgument())
 def list_items():
     '''Display the list of known items.'''
     return page('list', browser_no_cache = True, items = Item.select(),
@@ -497,8 +510,12 @@ def toggle_ready():
     item.ready = not item.ready
     log(f'locking db to change {barcode} ready to {item.ready}')
     try: 
-        lsp = LSP()
+        lsp = LSP(secret = request.environ.get("JWT_KEY", None))
         lsp.setstatus(barcode, item.ready)
+        decoded = jwt.decode(lsp.authKey, request.environ["JWT_KEY"], algorithms=["HS256"])
+        decoded_str = str(decoded)
+        log(decoded_str)
+        
     except ValueError as vex:
         return page('error', summary = 'Setting status in Sirsi',
                         message = (f'{str(vex)}'))
@@ -743,6 +760,17 @@ def loan_item(person):
 
         # OK, the user is allowed to loan out this item.  Round up the time to
         # the next minute to avoid loan times ending in the middle of a minute.
+        try: 
+            lsp = LSP(secret = request.environ.get("JWT_KEY", "nokey"))
+            lsp.checkout_item(barcode = barcode, username = person.uname, checkout = True, duration = item.duration)
+            log(f'Sending checkout request to Sirsi for barcode {barcode} succeeded!')
+
+        except ValueError as vex:
+            log(f'Sending checkout request to Sirsi failed with '
+                f'error code and message {str(vex)} ')
+            '''return page('error', summary = 'Checkout from Sirsi failed',
+                        message = (f'Sending checkout request to Sirsi for barcode {barcode} failed with '
+                                   f'error code and message {str(vex)} ')) '''
         time = delta(minutes = 1) if debug_mode() else delta(hours = item.duration)
         start = time_now()
         end = round_minutes(start + time, 'up')
@@ -752,6 +780,7 @@ def loan_item(person):
                     start_time = start, end_time = end, reloan_time = reloan)
 
     send_email(person.uname, item, start, end, dibs.base_url)
+
     log(f'redirecting {user(person)} to viewer page for new loan on {barcode}')
     redirect(f'{dibs.base_url}/view/{barcode}')
 
@@ -777,6 +806,16 @@ def end_loan(barcode, person):
     loan = Loan.get_or_none(Loan.item == item, Loan.user == person.uname)
     if loan and loan.state == 'active':
         # Normal case: user has loaned a copy of item. Update to 'recent'.
+        try:
+            lsp = LSP(secret = request.environ.get("JWT_KEY", "nokey"))
+            lsp.checkout_item(barcode = barcode, username = person.uname, checkout = False, duration = 0)
+            log(f'Sending checkin request to Sirsi for barcode {barcode} succeeded!')
+        except ValueError as vex:
+            log(f'Sending checkin request to Sirsi failed with '
+                f'error code and message {str(vex)} ')
+            '''redirect('error', summary = 'Error returned from Sirsi for checkin action ',
+                    message = (f'The item with barcode {barcode} returned error'
+                               ' {str(vex)}')) '''
         log(f'locking db to change {barcode} loan state by user {user(person)}')
         with database.atomic('immediate'):
             now = time_now()
@@ -789,7 +828,8 @@ def end_loan(barcode, person):
                 History.create(type = 'loan', what = loan.item.barcode,
                                start_time = loan.start_time,
                                end_time = loan.end_time)
-        redirect(f'{dibs.base_url}/thankyou')
+
+            redirect(f'{dibs.base_url}/thankyou')
     else:
         log(f'{user(person)} does not have {barcode} loaned out')
         redirect(f'{dibs.base_url}/item/{barcode}')
