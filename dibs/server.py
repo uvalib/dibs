@@ -806,16 +806,6 @@ def end_loan(barcode, person):
     loan = Loan.get_or_none(Loan.item == item, Loan.user == person.uname)
     if loan and loan.state == 'active':
         # Normal case: user has loaned a copy of item. Update to 'recent'.
-        try:
-            lsp = LSP(secret = request.environ.get("JWT_KEY", "nokey"))
-            lsp.checkout_item(barcode = barcode, username = person.uname, checkout = False, duration = 0)
-            log(f'Sending checkin request to Sirsi for barcode {barcode} succeeded!')
-        except ValueError as vex:
-            log(f'Sending checkin request to Sirsi failed with '
-                f'error code and message {str(vex)} ')
-            '''redirect('error', summary = 'Error returned from Sirsi for checkin action ',
-                    message = (f'The item with barcode {barcode} returned error'
-                               ' {str(vex)}')) '''
         log(f'locking db to change {barcode} loan state by user {user(person)}')
         with database.atomic('immediate'):
             now = time_now()
@@ -823,13 +813,20 @@ def end_loan(barcode, person):
             loan.end_time = now
             loan.reloan_time = round_minutes(now + _RELOAN_WAIT_TIME, 'down')
             loan.save(only = [Loan.state, Loan.end_time, Loan.reloan_time])
+            log(f'setting loan state for barcode {barcode} to recent ')
             if not staff_user(loan.user) or debug_mode():
                 # Don't count staff users in loan stats except in debug mode.
                 History.create(type = 'loan', what = loan.item.barcode,
                                start_time = loan.start_time,
                                end_time = loan.end_time)
-
-            redirect(f'{dibs.base_url}/thankyou')
+            try:
+                lsp = LSP(secret = request.environ.get("JWT_KEY", "nokey"))
+                lsp.checkout_item(barcode = barcode, username = person.uname, checkout = False, duration = 0)
+                log(f'Sending checkin request to Sirsi for barcode {barcode} succeeded!')
+            except ValueError as vex:
+                log(f'Sending checkin request to Sirsi failed with '
+                    f'error code and message {str(vex)} ')
+        redirect(f'{dibs.base_url}/thankyou')
     else:
         log(f'{user(person)} does not have {barcode} loaned out')
         redirect(f'{dibs.base_url}/item/{barcode}')
