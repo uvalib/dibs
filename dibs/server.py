@@ -109,6 +109,9 @@ _IIIF_CACHE = LRU(int(config('IIIF_CACHE_SIZE')))
 def page(name, **kargs):
     '''Create a page using template "name" with some standard variables set.'''
     person = person_from_environ(request.environ)
+    secret = request.environ.get("JWT_KEY", "nokey")
+    env_str = str(request.environ)
+    log(env_str)
     logged_in = (person is not None and person.uname != '')
     if kargs.get('browser_no_cache', False):
         response.add_header('Expires', '0')
@@ -448,7 +451,7 @@ def update_item():
             log(f'{barcode} already exists in the database')
             return page('error', summary = 'duplicate entry',
                         message = f'An item with barcode {barcode} already exists.')
-        lsp = LSP()
+        lsp = LSP(secret = request.environ.get("JWT_KEY", "nokey"))
         try:
             rec = lsp.record(barcode = barcode)
         except ValueError:
@@ -510,11 +513,11 @@ def toggle_ready():
     item.ready = not item.ready
     log(f'locking db to change {barcode} ready to {item.ready}')
     try: 
-        lsp = LSP(secret = request.environ.get("JWT_KEY", None))
+        lsp = LSP(secret = request.environ.get("JWT_KEY", "nokey"))
         lsp.setstatus(barcode, item.ready)
-        decoded = jwt.decode(lsp.authKey, request.environ["JWT_KEY"], algorithms=["HS256"])
-        decoded_str = str(decoded)
-        log(decoded_str)
+        #decoded = jwt.decode(lsp.authKey, request.environ["JWT_KEY"], algorithms=["HS256"])
+        #decoded_str = str(decoded)
+        #log(decoded_str)
         
     except ValueError as vex:
         return page('error', summary = 'Setting status in Sirsi',
