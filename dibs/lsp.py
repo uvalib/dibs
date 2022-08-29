@@ -546,7 +546,7 @@ class LSP(LSPInterface):
             url = config('POOL_URL', section = 'poolapi')
             urlAuth = config('AUTH_URL', section = 'poolapi')
             urlStatus = config('STATUS_URL', default = None, section = 'poolapi')
-            secret = kwds.get("secret", None)
+            secret = config('JWT_KEY', default = "nokeynohow", section = 'poolapi')
             lsp = VirgoAPIInterface(url, urlAuth, urlStatus, secret)
         else:
             lsp = UnconfiguredInterface()

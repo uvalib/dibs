@@ -109,9 +109,6 @@ _IIIF_CACHE = LRU(int(config('IIIF_CACHE_SIZE')))
 def page(name, **kargs):
     '''Create a page using template "name" with some standard variables set.'''
     person = person_from_environ(request.environ)
-    secret = request.environ.get("JWT_KEY", "nokey")
-    env_str = str(request.environ)
-    log(env_str)
     logged_in = (person is not None and person.uname != '')
     if kargs.get('browser_no_cache', False):
         response.add_header('Expires', '0')
@@ -247,7 +244,7 @@ class LoanExpirer(BottlePluginBase):
                                        start_time = loan.start_time,
                                        end_time = loan.end_time)
                         try :
-                            lsp = LSP(secret = request.environ.get("JWT_KEY", "nokey"))
+                            lsp = LSP()
                             lsp.checkout_item(barcode = barcode, username = loan.user, checkout = False, duration = 0)
                             log(f'Sending checkin request to Sirsi for barcode {barcode} succeeded!')
                         except ValueError as vex:
@@ -451,7 +448,7 @@ def update_item():
             log(f'{barcode} already exists in the database')
             return page('error', summary = 'duplicate entry',
                         message = f'An item with barcode {barcode} already exists.')
-        lsp = LSP(secret = request.environ.get("JWT_KEY", "nokey"))
+        lsp = LSP()
         try:
             rec = lsp.record(barcode = barcode)
         except ValueError:
@@ -513,7 +510,7 @@ def toggle_ready():
     item.ready = not item.ready
     log(f'locking db to change {barcode} ready to {item.ready}')
     try: 
-        lsp = LSP(secret = request.environ.get("JWT_KEY", "nokey"))
+        lsp = LSP()
         lsp.setstatus(barcode, item.ready)
         #decoded = jwt.decode(lsp.authKey, request.environ["JWT_KEY"], algorithms=["HS256"])
         #decoded_str = str(decoded)
@@ -764,7 +761,7 @@ def loan_item(person):
         # OK, the user is allowed to loan out this item.  Round up the time to
         # the next minute to avoid loan times ending in the middle of a minute.
         try: 
-            lsp = LSP(secret = request.environ.get("JWT_KEY", "nokey"))
+            lsp = LSP()
             lsp.checkout_item(barcode = barcode, username = person.uname, checkout = True, duration = item.duration)
             log(f'Sending checkout request to Sirsi for barcode {barcode} succeeded!')
 
@@ -823,7 +820,7 @@ def end_loan(barcode, person):
                                start_time = loan.start_time,
                                end_time = loan.end_time)
             try:
-                lsp = LSP(secret = request.environ.get("JWT_KEY", "nokey"))
+                lsp = LSP()
                 lsp.checkout_item(barcode = barcode, username = person.uname, checkout = False, duration = 0)
                 log(f'Sending checkin request to Sirsi for barcode {barcode} succeeded!')
             except ValueError as vex:
