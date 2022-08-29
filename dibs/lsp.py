@@ -411,6 +411,7 @@ class VirgoAPIInterface(LSPInterface):
                 expirationTime = int((datetime.now() + timedelta(minutes=20)).timestamp())
                 values = {"iss" : "v4", "userId" : f'{username}', "exp" : expirationTime}
                 log(f'Building authorization key for user {username} using jwt encode')
+                log(f'Using secret key {self.secret}')
                 self.authKey = jwt.encode(values, self.secret, algorithm="HS256")
                 log(f'authKey = {self.authKey}')
             else :
