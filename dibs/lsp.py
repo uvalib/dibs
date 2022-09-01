@@ -266,6 +266,8 @@ class VirgoAPIInterface(LSPInterface):
                                edition   = edition,
                                isbn_issn = isbn_issn)
             return record
+        except ValueError as ex:
+            raise ex
         except Exception as ex:
             log(f'could not find {barcode} in SOLR')
             raise ValueError('No such barcode {barcode} in {self.url}')
@@ -313,6 +315,15 @@ class VirgoAPIInterface(LSPInterface):
         except KeyError :
             log(f'could not find {barcode} in SOLR')
             raise ValueError('No such barcode {barcode} in {self.url}')
+        except HTTPError as ex:
+            log(f'Error connecting to Sirsi to find data about {barcode}')
+            log(f'status is {ex.status}')
+            log(f'message is {ex.msg}')
+            raise ValueError(f'{ex.status} {ex.msg} while connecting to Sirsi to find data about {barcode}'  )
+        except URLError as ex:
+            log(f'Error connecting to Sirsi to find data about {barcode}')
+            log(f'message is {ex.reason.strerror}')
+            raise ValueError(f'{ex.reason.strerror} while connecting to Sirsi to find data about {barcode}'  )
         except Exception as ex:
             exceptionMessage = repr(ex)
             log(f'exceptionMessage {exceptionMessage}')
@@ -389,7 +400,7 @@ class VirgoAPIInterface(LSPInterface):
             ''' get authorization key '''
             if (self.secret != None):
                 expirationTime = int((datetime.now() + timedelta(minutes=20)).timestamp())
-                values =  {'userId': 'anonymous', 'isUva': False, 'homeLibrary': '', 'profile': '', 'canPurchase': False, 'canLEO': False, 'canLEOPlus': False, 'canPlaceReserve': False, 'useSIS': False, 'role': 'guest', 'authMethod': 'none', 'exp': f'{expirationTime}', 'iss': 'v4'}
+                values =  {'userId': 'anonymous', 'isUva': False, 'homeLibrary': '', 'profile': '', 'canPurchase': False, 'canLEO': False, 'canLEOPlus': False, 'canPlaceReserve': False, 'useSIS': False, 'role': 'guest', 'authMethod': 'none', 'exp': expirationTime, 'iss': 'v4'}
                 log(f'Getting authorization key from {self.urlAuth}')
                 data = urllib.parse.urlencode(values).encode("utf-8")
                 log(f'Building authorization key using jwt encode')

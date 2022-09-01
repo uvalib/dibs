@@ -451,11 +451,9 @@ def update_item():
         lsp = LSP()
         try:
             rec = lsp.record(barcode = barcode)
-        except ValueError:
-            return page('error', summary = 'Incomplete record in LSP',
-                        message = (f'The item with barcode {barcode} lacks one'
-                                   ' or more basic metadata fields (title,'
-                                   ' author, year) in the library catalog.'))
+        except ValueError as ex:
+            return page('error', summary = 'Looking up item in library catalog',
+                        message = (str(ex)))
         if not rec:
             log(f'could not find {barcode} in LSP')
             return page('error', summary = 'no such barcode',
