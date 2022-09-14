@@ -20,6 +20,9 @@
           this service, please <a href="{{feedback_url}}">use our feedback form</a> to let us know.
           %end
         </p>
+        <p class="mx-auto col-6 my-5 text-center text-info font-italic">
+          Tell us how we did!  Please take the <a href="https://virginia.az1.qualtrics.com/jfe/form/SV_aaehed2qblw5owu">following survey</a> related to your experience using the UVA Library eReserves System.
+        </p>
       </div>
 
       %include('common/footer.tpl')
