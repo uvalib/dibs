@@ -38,6 +38,9 @@ Please note that UVA Library's digital loan service only functions in web browse
 Information about loan policies can be found at {info_page}
 
 We hope your experience with UVA Library's digital loan service is a pleasant one. Don't hesitate to send us feedback, and please report any problems. You can do it directly via email to {sender} or using our anonymous feedback form at {feedback}
+
+Tell us how we did!  Please take the following survey related to your experience using the UVA Library eReserves System.
+{survey_link}
 '''
 
 
@@ -59,7 +62,8 @@ def send_email(user, item, start, end, base_url):
                              user      = email,
                              subject   = subject,
                              sender    = config('MAIL_SENDER'),
-                             feedback  = 'https://search.lib.virginia.edu/feedback?url=https%3A%2F%2Freserves.library.virginia.edu') #config('FEEDBACK_URL', default = ''))
+                             feedback  = 'https://search.lib.virginia.edu/feedback?url=https%3A%2F%2Freserves.library.virginia.edu',
+                             survey_link = 'https://virginia.az1.qualtrics.com/jfe/form/SV_aaehed2qblw5owu')
         log(f'sending mail to {anon(email)} about loan of {item.barcode}')
         mailer  = smtplib.SMTP(config('MAIL_HOST'))
         mailer.sendmail(config('MAIL_SENDER'), [email], body)
