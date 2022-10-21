@@ -36,6 +36,7 @@
       %include('common/navbar.tpl')
       %from os import stat
       %from os.path import join, exists
+      %from commonpy.file_utils import nonempty
 
       <div class="container-fluid main-container">
         <div class="row d-flex justify-content-center w-100 pt-3 my-3 mx-auto item-info-row">
@@ -91,14 +92,15 @@
           </div>
 
           <div class="col-sm-2 col-xs-0 item-thumbnail">
-             %thumbnail_url_for_barcode = thumbnails_url_pattern.format(barcode = item.barcode)
-             %if item.barcode :
-               <img class="mx-auto pt-3 thumbnail-image" style="width: 90px" 
-                   src="{{thumbnail_url_for_barcode}}" onerror="this.src='{{base_url}}/static/missing-thumbnail.svg';this.onerror='';">
-             %else :
-               <img class="mx-auto pt-3 thumbnail-image" style="width: 90px" 
-                   src="{{base_url}}/static/missing-thumbnail.svg">
-             %end
+            %thumbnail_file = join(thumbnails_dir, item.barcode + ".jpg")
+            %if exists(thumbnail_file) and nonempty(thumbnail_file):
+              %timestamp = stat(thumbnail_file).st_mtime
+            <img class="thumbnail thumbnail-image img-responsive"
+                 src="{{base_url}}/thumbnails/{{item.barcode}}.jpg?{{timestamp}}">
+            %else:
+            <img class="thumbnail img-responsive"
+                 src="{{base_url}}/static/missing-thumbnail.svg">
+            %end
           </div>
         </div>
 
