@@ -15,9 +15,7 @@
       %from os.path import join, exists
       %from commonpy.file_utils import nonempty
 
-      %thumbnail_file = item and join(thumbnails_dir, item.barcode + ".jpg")
-      %show_thumbnail = thumbnail_file and exists(thumbnail_file) and nonempty(thumbnail_file)
-      %col_width = "col-5" if show_thumbnail or item else "col-6"
+      %col_width = "col-5" if item else "col-6"
 
       <div class="container main-container  mx-auto mt-4">
         <h2 class="mx-auto text-center pb-2">
@@ -80,17 +78,13 @@
 
             %if item:
             <div class="col-2 d-flex align-items-center pr-5">
-              %if show_thumbnail:
-                %timestamp = stat(thumbnail_file).st_mtime
-              <a class="fas fa-trash-alt fa-2x text-danger"
-                 style="position: absolute; z-index: 100; top: 70%; right: 30%"
-                 onclick="return confirmDelete();"
-                 href="{{base_url}}/delete-thumbnail/{{item.barcode}}"></a>
-              <img class="mx-auto pt-3 thumbnail-image" style="width: 90px"
-                   src="{{base_url}}/thumbnails/{{item.barcode}}.jpg?{{timestamp}}">
-              %else:
-              <img class="mx-auto py-3" style="width: 90px"
-                   src="{{base_url}}/static/missing-thumbnail.svg">
+              %thumbnail_url_for_barcode = thumbnails_url_pattern.format(barcode = item.barcode)
+              %if item.barcode :
+                <img class="mx-auto pt-3 thumbnail-image" style="width: 90px" 
+                    src="{{thumbnail_url_for_barcode}}" onerror="this.src='{{base_url}}/static/missing-thumbnail.svg';this.onerror='';">
+              %else :
+                <img class="mx-auto pt-3 thumbnail-image" style="width: 90px" 
+                    src="{{base_url}}/static/missing-thumbnail.svg">
               %end
             </div>
             %end

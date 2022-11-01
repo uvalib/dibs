@@ -484,26 +484,9 @@ def update_item():
                 # field values, but keep the same database object.
                 item.save(only = [Item.barcode, Item.num_copies, Item.duration,
                                   Item.notes, Item.title, Item.author,
-                                  Item.item_id, Item.image_page, Item.year,
+                                  Item.item_id, Item.item_page, Item.year,
                                   Item.publisher, Item.edition])
 
-            if thumbnail and thumbnail.filename and thumbnail.filename != 'empty':
-                log('user provided a thumbnail image file; will upload & save')
-                # We don't get content-length in the headers, so won't know the
-                # size ahead of time. Read by chunks & check against max size.
-                data = b''
-                while (chunk := thumbnail.file.read(1024)):
-                    data += chunk
-                    if len(data) >= _MAX_THUMBNAIL_SIZE:
-                        max_size = naturalsize(_MAX_THUMBNAIL_SIZE)
-                        log(f'file exceeds {max_size} -- ignoring the file')
-                        return page('error', summary = 'cover image is too large',
-                                    message = ('The chosen image is larger than'
-                                               f' the limit of {max_size}.'))
-                dest_file = join(_THUMBNAILS_DIR, barcode + '.jpg')
-                log(f'writing {naturalsize(len(data))} image to {dest_file}')
-                with open(dest_file, 'wb') as new_file:
-                    new_file.write(as_jpeg(data))
     except ValueError:
         return page('error', summary = f'Problem with {barcode} in {lsp.name}',
                     message = (f'Either {lsp.name} does not have an item'

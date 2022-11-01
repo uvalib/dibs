@@ -270,8 +270,8 @@ class VirgoAPIInterface(LSPInterface):
             #        log(f"{barcode} lacks ISBN & thumbnail URL => no thumbnail")
             #else:
             #    log(f'thumbnail image already exists in {thumbnail_file}')
-            record = LSPRecord(id        = rec_id,
-                               url       = url,
+            record = LSPRecord(item_id   = rec_id,
+                               item_page = url,
                                title     = truncated_title(title),
                                author    = author,
                                publisher = publisher,
