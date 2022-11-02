@@ -224,6 +224,11 @@ class VirgoAPIInterface(LSPInterface):
         self.urlStatus = urlStatus
         self.authKey = None
 
+    @property
+    def name(self):
+        '''Return the name of this LSP, for use in (e.g.) error messages.'''
+        return 'VIRGO'
+
     def record(self, barcode = None):
         '''Return a record for the item identified by the "barcode".'''
         try:
