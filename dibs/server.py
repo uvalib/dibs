@@ -521,8 +521,13 @@ def start_processing():
 
 
 @dibs.post('/ready', apply = VerifyStaffUser())
+@dibs.get('/ready', apply = VerifyStaffUser())
 def toggle_ready():
     '''Set the ready-to-loan field.'''
+    if request.method == 'GET' :
+        log(f'called ready with method get')
+        redirect(f'{dibs.base_url}/list')
+
     barcode = request.POST.barcode.strip()
     item = Item.get(Item.barcode == barcode)
     item.ready = not item.ready
