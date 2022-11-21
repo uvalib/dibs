@@ -378,7 +378,7 @@ def logout():
 
 
 '''@dibs.get('/list', apply = VerifyStaffUser())'''
-@dibs.get('/list', apply = AddPersonArgument())
+@dibs.get('/list', apply = VerifyStaffUser())
 def list_items():
     '''Display the list of known items.'''
     return page('list', browser_no_cache = True, items = Item.select(),
