@@ -1,7 +1,7 @@
 #
 # build the target application
 #
-FROM public.ecr.aws/ubuntu/ubuntu:22.04_stable
+FROM public.ecr.aws/ubuntu/ubuntu:23.04
 
 # for tzdata package
 ENV DEBIAN_FRONTEND noninteractive
