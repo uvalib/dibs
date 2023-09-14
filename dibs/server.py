@@ -193,7 +193,7 @@ class DatabaseConnector(BottlePluginBase):
     '''Wrap a route with a connection to the database.'''
     def __call__(self, callback):
         def database_connector(*args, **kwargs):
-            log('opening database connection')
+            #log('opening database connection')
             database.connect()
             try:
                 result = callback(*args, **kwargs)
@@ -201,7 +201,7 @@ class DatabaseConnector(BottlePluginBase):
             except PeeweeException as ex:
                 log('*** database exception: ' + str(ex))
             finally:
-                log('closing database connection')
+                #log('closing database connection')
                 database.close()
             return result
 
@@ -221,7 +221,7 @@ class LoanExpirer(BottlePluginBase):
         def loan_expirer(*args, **kwargs):
             now = time_now()
             # Delete expired loan recency records.
-            log('checking for expired loans')
+            # log('checking for expired loans')
             n = Loan.delete().where(Loan.state == 'recent', now >= Loan.reloan_time).execute()
             if n > 0:
                 log(f'deleted {n} recent loans that reached their reloan times')
@@ -236,17 +236,17 @@ class LoanExpirer(BottlePluginBase):
                         next_time = loan.end_time + _RELOAN_WAIT_TIME
                         loan.reloan_time = round_minutes(next_time, 'down')
                         loan.state = 'recent'
-                        loan.save(only = [Loan.state, Loan.reloan_time])
-                        # Don't count staff users in stats except in debug mode
-                        if staff_user(loan.user) and not debug_mode():
-                            continue
-                        History.create(type = 'loan', what = barcode,
-                                       start_time = loan.start_time,
-                                       end_time = loan.end_time)
                         try :
                             lsp = LSP()
                             lsp.checkout_item(barcode = barcode, username = loan.user, checkout = False, duration = 0)
                             log(f'Sending checkin request to Sirsi for barcode {barcode} succeeded!')
+                            loan.save(only = [Loan.state, Loan.reloan_time])
+                            # Don't count staff users in stats except in debug mode
+                            if staff_user(loan.user) and not debug_mode():
+                                continue
+                            History.create(type = 'loan', what = barcode,
+                                       start_time = loan.start_time,
+                                       end_time = loan.end_time)
                         except ValueError as vex:
                             log(f'Sending checkin request to Sirsi failed with '
                                 f'error code and message {str(vex)} ')
@@ -271,7 +271,7 @@ class BarcodeVerifier(BottlePluginBase):
             # This handles both HTTP GET & POST requests.  In the case of GET,
             # there will be an argument to the function called "barcode"; in
             # the case of POST, there will be a form variable called "barcode".
-            log('running barcode verifier')
+            #$log('running barcode verifier')
             barcode = None
             if 'barcode' in kwargs:
                 barcode = kwargs['barcode']
