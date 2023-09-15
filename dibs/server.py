@@ -239,7 +239,7 @@ class LoanExpirer(BottlePluginBase):
                         try :
                             lsp = LSP()
                             lsp.checkout_item(barcode = barcode, username = loan.user, checkout = False, duration = 0)
-                            log(f'Sending checkin request to Sirsi for barcode {barcode} succeeded!')
+                            log(f'Sending check-in request to Sirsi for barcode {barcode} succeeded!')
                             loan.save(only = [Loan.state, Loan.reloan_time])
                             # Don't count staff users in stats except in debug mode
                             if staff_user(loan.user) and not debug_mode():
