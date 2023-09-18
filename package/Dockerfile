@@ -1,7 +1,7 @@
 #
 # build the target application
 #
-FROM public.ecr.aws/ubuntu/ubuntu:23.04
+FROM public.ecr.aws/ubuntu/ubuntu:23.10
 
 # for tzdata package
 ENV DEBIAN_FRONTEND noninteractive
@@ -15,7 +15,7 @@ RUN cp /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 # install the application requirements
 COPY requirements.txt /tmp/requirements.txt
-RUN python3 -m pip install -r /tmp/requirements.txt
+RUN python3 -m pip install -r /tmp/requirements.txt --break-system-packages
 
 # Specify home 
 ENV APP_HOME /dibs
