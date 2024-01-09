@@ -1,8 +1,7 @@
 define(function () {
     return function (formats) {
         return {
-            async: ['IIIFMetadataComponent', 'uv-ebook-extension.proxy']
+            async: ['MetadataComponent', 'uv-ebook-extension.proxy']
         };
     };
 });
-//# sourceMappingURL=dependencies.js.map

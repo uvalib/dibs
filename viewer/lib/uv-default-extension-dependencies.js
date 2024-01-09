@@ -1,8 +1,7 @@
 define(function () {
     return function (formats) {
         return {
-            async: ['IIIFMetadataComponent']
+            async: ['MetadataComponent']
         };
     };
 });
-//# sourceMappingURL=dependencies.js.map
