@@ -14,7 +14,7 @@
      // Adapted from answers to https://stackoverflow.com/q/43043113/743730
      window.addEventListener("pageshow", function (event) {
        var historyTraversal = event.persisted ||
-                              (typeof window.performance != "undefined" && 
+                              (typeof window.performance != "undefined" &&
                                window.performance.navigation.type === 2);
        if (historyTraversal) {
          log("Back button history traversal -- reloading page");
@@ -30,7 +30,7 @@
      });
     </script>
   </head>
-  
+
   <body>
     <div class="page-content">
       %include('common/navbar.tpl')
@@ -94,10 +94,10 @@
           <div class="col-sm-2 col-xs-0 item-thumbnail">
              %thumbnail_url_for_barcode = thumbnails_url_pattern.format(barcode = item.barcode)
              %if item.barcode :
-               <img class="mx-auto pt-3 thumbnail-image" style="width: 90px" 
+               <img class="mx-auto pt-3 thumbnail-image" style="width: 90px"
                    src="{{thumbnail_url_for_barcode}}" onerror="this.src='{{base_url}}/static/missing-thumbnail.svg';this.onerror='';">
              %else :
-               <img class="mx-auto pt-3 thumbnail-image" style="width: 90px" 
+               <img class="mx-auto pt-3 thumbnail-image" style="width: 90px"
                    src="{{base_url}}/static/missing-thumbnail.svg">
              %end
           </div>
@@ -106,7 +106,7 @@
         <div class="row d-flex justify-content-center">
           <div class="loan-info mt-5 px-3">
 
-            <p class="copyright"><strong style="color:var(--uvalib-red)">Copyright Notice:</strong> The copyright law of the United States (title 17, United States Code) governs the making of photocopies or other reproductions of copyrighted material. Under certain conditions specified in the law, libraries and archives are authorized to furnish a photocopy or other reproduction. One of these specific conditions is that the photocopy or reproduction is not to be “used for any purpose other than private study, scholarship, or research.” The library has utilized technical measures to prevent any further copying, downloading, or distribution of this work. Use of this reproduction in violation of these terms could subject users to potential liability for copyright infringement.</p>
+            <p class="copyright"><strong style="color:#DF1E43;">Copyright Notice:</strong> The copyright law of the United States (title 17, United States Code) governs the making of photocopies or other reproductions of copyrighted material. Under certain conditions specified in the law, libraries and archives are authorized to furnish a photocopy or other reproduction. One of these specific conditions is that the photocopy or reproduction is not to be “used for any purpose other than private study, scholarship, or research.” The library has utilized technical measures to prevent any further copying, downloading, or distribution of this work. Use of this reproduction in violation of these terms could subject users to potential liability for copyright infringement.</p>
             <p class="mx-auto text-center w-100 pt-3">
               <span id="available">This item is currently not available
                 to you for a digital loan.</span>
@@ -166,7 +166,7 @@
                refreshTip         = document.getElementById('refresh-tip'),
                noJSElement        = document.getElementById('no-javascript'),
                noCookiesElement   = document.getElementById('no-cookies');
-           
+
            // Toggle the visibility of the loan button, expire times and
            // explanation depending on availability.
            function set_book_status(available, explanation, when_available) {
@@ -221,14 +221,14 @@
                }
              }
            }
-           
+
            if ("{{available}}" == "True") {
              set_book_status(true, '', '');
            } else {
              set_book_status(false, '{{explanation}}', '{{when_available}}');
            }
 
-           /* NOTE: This is our refresher service (for book status updates). 
+           /* NOTE: This is our refresher service (for book status updates).
               The service is created with setIneterval and will run
               max_poll_count times at an interval set by wait_period.
             */
