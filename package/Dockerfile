@@ -1,16 +1,19 @@
 #
 # build the target application
 #
-FROM public.ecr.aws/ubuntu/ubuntu:25.04
+FROM public.ecr.aws/ubuntu/ubuntu:23.10
 
 # for tzdata package
 ENV DEBIAN_FRONTEND=noninteractive
+
+# update the package manager to use the old release repos
+RUN cat /etc/apt/sources.list | sed -e 's&ports.ubuntu.com/ubuntu-ports&old-releases.ubuntu.com/ubuntu&g' > /tmp/sources.list && mv /tmp/sources.list /etc/apt/sources.list
 
 # update the packages
 RUN apt -y update && apt -y upgrade && apt -y install tzdata apache2 vim python3-pip && apt -y install apache2-dev apache2-utils libapache2-mod-wsgi-py3
 
 # set the timezone appropriatly
-ENV TZ=America/New_York
+ENV TZ=EST5EDT
 RUN cp /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 # install the application requirements
