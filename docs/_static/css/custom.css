@@ -47,6 +47,11 @@ figure {
   color: #2b2b2b;
   font-weight: bold;
 }
+.btn-unavailable {
+  background-color: transparent;
+  color: #2b2b2b;
+  font-weight: bold;
+}
 
 h1 {
   font-weight: 500 !important;

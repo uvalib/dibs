@@ -188,7 +188,7 @@
                loanButton.removeAttribute('disabled');
                loanButton.setAttribute('value', 'Begin loan now');
                loanButton.classList.add('btn-primary');
-               loanButton.classList.remove('btn-secondary');
+               loanButton.classList.remove('btn-unavailable');
                availableElement.innerHTML = 'This item is available '
                                           + 'for a digital loan.';
                explanationElement.innerHTML = '';
@@ -199,7 +199,7 @@
                loanButton.setAttribute('disabled', true);
                loanButton.setAttribute('value', 'Not available');
                loanButton.classList.remove('btn-primary');
-               loanButton.classList.add('btn-secondary');
+               loanButton.classList.add('btn-unavailable');
                availableElement.innerHTML = 'This item is currently not available '
                                           + 'for a new digital loan.';
                if (typeof explanation !== "undefined" && explanation !== null
