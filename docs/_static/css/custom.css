@@ -42,15 +42,16 @@ figure {
   color: #fff;
 }
 
-.color-not-available {
-  background-color: transparent;
-  color: #2b2b2b;
-  font-weight: bold;
-}
 .btn-unavailable {
   background-color: transparent;
-  color: #2b2b2b;
+  color: #212529;
   font-weight: bold;
+}
+.btn-unavailable:disabled{
+  background-color: transparent;
+  color: #212529 !important;
+  font-weight: bold;
+  opacity: 1 !important;
 }
 
 h1 {
