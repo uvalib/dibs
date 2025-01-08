@@ -124,12 +124,27 @@ a {
   opacity: 0.35;
 }
 
+.btn.btn-unavailable {
+  background-color: transparent;
+  color: #212529;
+  font-weight: bold;
+}
+.btn.btn-unavailable:disabled{
+  background-color: transparent;
+  color: #212529 !important;
+  font-weight: bold;
+  opacity: 1 !important;
+}
+
 img.svg-megaphone {
   height: 2rem !important;
 }
 
 #loan-button {
   width: 140px;
+}
+#loan-button:disabled {
+  opacity: 1;
 }
 
 .delayed {
@@ -155,10 +170,6 @@ used in situations where we need to make a link perform a POST request. */
   padding: 0!important;
   text-decoration: underline;
   cursor: pointer;
-}
-
-.item-info-row {
-
 }
 
 .item-info {
@@ -293,7 +304,7 @@ screen and (max-device-width: 415px) and (-webkit-device-pixel-ratio: 4) {
   }
 
   #no-javascript, #no-cookies {
-    font-size: 1.2rem;    
+    font-size: 1.2rem;
   }
 
   #loan-button {

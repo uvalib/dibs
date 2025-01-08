@@ -42,18 +42,6 @@ figure {
   color: #fff;
 }
 
-.btn-unavailable {
-  background-color: transparent;
-  color: #212529;
-  font-weight: bold;
-}
-.btn-unavailable:disabled{
-  background-color: transparent;
-  color: #212529 !important;
-  font-weight: bold;
-  opacity: 1 !important;
-}
-
 h1 {
   font-weight: 500 !important;
   color: #000 !important;
