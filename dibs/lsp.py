@@ -130,7 +130,7 @@ class TindInterface(LSPInterface):
         except Exception:
             log(f'could not find {barcode} in TIND')
             raise ValueError('No such barcode {barcode} in {self.url}')
-    
+
 
 class SolrInterface(LSPInterface):
     '''Interface layer for TIND hosted LSP servers.'''
@@ -148,7 +148,7 @@ class SolrInterface(LSPInterface):
         self.fq         = "fq=data_source_f:sirsi"
         self.rows       = "rows=1"
         self.wt         = "wt=json"
-        self.params     = [ self.fl, self.fq, self.wt, self.rows ] 
+        self.params     = [ self.fl, self.fq, self.wt, self.rows ]
         self.p          = "&".join(self.params)
 
 
@@ -167,7 +167,7 @@ class SolrInterface(LSPInterface):
             isbn_issn = isbn or issn
             edition = ''
             url = f'https://search.lib.virginia.edu/items/{rec_id}'
-            
+
             log(f'record for {barcode} has id {rec_id} in {self.url}')
             log(f'record for {barcode} has title {title}')
             log(f'record for {barcode} has suthor {author}')
@@ -205,14 +205,14 @@ class SolrInterface(LSPInterface):
             full_url=self.url+'?'+self.p+'&'+q
             connection = urllib.request.urlopen(full_url)
             log(f'response {connection}')
-            response   = simplejson.load(connection) 
+            response   = simplejson.load(connection)
             #response = None
             return response
         except Exception:
             log(f'could not find {barcode} in SOLR')
             raise ValueError('No such barcode {barcode} in {self.url}')
 
-           
+
 class VirgoAPIInterface(LSPInterface):
     '''Interface layer for TIND hosted LSP servers.'''
 
@@ -258,7 +258,7 @@ class VirgoAPIInterface(LSPInterface):
             isbn_issn = isbn or issn or ""
             edition = ""
             url = f'https://search.lib.virginia.edu/items/{rec_id}'
-            
+
             log(f'record for {barcode} has id {rec_id} in {self.urlPool}')
             log(f'record for {barcode} has title {title}')
             log(f'record for {barcode} has suthor {author}')
@@ -312,12 +312,12 @@ class VirgoAPIInterface(LSPInterface):
             log(f'status = {connection.status}')
             response = simplejson.load(connection)
             lod = response["group_list"][0]["record_list"][0]["fields"]
-            ididx = None 
+            ididx = None
             for count, ele in enumerate(lod):
                 if (ele["name"] == "id"):
                     ididx = count
             idval = lod[ididx]["value"]
-            
+
             ''' use catkey to get item data '''
             ''' curl -vv -X GET "https://pool-solr-ws-uva-library.internal.lib.virginia.edu/api/resource/u2915688" -H "Content-Type: application/json" -H "Authorization: Bearer $AUTH_TOKEN"'''
             log(f'submitting request for resource {idval} to URL {self.urlPool}')
@@ -361,7 +361,7 @@ class VirgoAPIInterface(LSPInterface):
                     [ "Content-Type", "application/json" ]
                     ] )
                 dibsstr = 'indibs' if ready else 'nodibs'
-                status_url = self.urlStatus+'/v4/dibs/'+dibsstr+'/'+barcode
+                status_url = self.urlStatus+'/dibs/'+dibsstr+'/'+barcode
                 request = urllib.request.Request(url = status_url, headers = headers, method = "PUT")
                 log(f'headers {request.headers}')
                 log(f'set_status_url {status_url}')
@@ -393,7 +393,7 @@ class VirgoAPIInterface(LSPInterface):
                     [ "Content-Type", "application/json" ]
                     ] )
                 checkoutstr = 'checkout' if checkout else 'checkin'
-                status_url = self.urlStatus+'/v4/dibs/'+checkoutstr
+                status_url = self.urlStatus+'/dibs/'+checkoutstr
                 request = urllib.request.Request(url = status_url, data = argsdata, headers = headers, method = "POST")
                 log(f'headers {request.headers}')
                 log(f'checkout item url is {status_url}')
@@ -433,7 +433,7 @@ class VirgoAPIInterface(LSPInterface):
                 log(f'authKey = {self.authKey}')
             else :
                 self.authKey = None
-                
+
     def getAuthKeyForPerson(self, username = None):
             ''' build authorization key '''
             if (username != None and self.secret != None):
@@ -444,7 +444,7 @@ class VirgoAPIInterface(LSPInterface):
                 self.authKey = jwt.encode(values, self.secret, algorithm="HS256")
                 log(f'authKey = {self.authKey}')
             else :
-                self.authKey = None    
+                self.authKey = None
 
 
 class FolioInterface(LSPInterface):
@@ -531,7 +531,7 @@ class UnconfiguredInterface(LSPInterface):
                          year      = 'LSP not configured',
                          edition   = 'LSP not configured',
                          isbn_issn = '')
-    
+
 
 
 # Primary exported class.
