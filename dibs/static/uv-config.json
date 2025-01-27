@@ -153,8 +153,8 @@
                 "feedbackEnabled": false,
                 "fullscreenEnabled": true,
                 "minimiseButtons": true,
-                "moreInfoEnabled": true,
-                "openEnabled": true,
+                "moreInfoEnabled": false,
+                "openEnabled": false,
                 "printEnabled": false,
                 "shareEnabled": false
             },
@@ -184,7 +184,7 @@
             "options": {
                 "centerOptionsEnabled": true,
                 "localeToggleEnabled": false,
-                "settingsButtonEnabled": true
+                "settingsButtonEnabled": false
             }
         },
         "helpDialogue": {
