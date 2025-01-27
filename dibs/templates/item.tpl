@@ -94,7 +94,7 @@
           <div class="col-sm-2 col-xs-0 item-thumbnail">
              %thumbnail_url_for_barcode = thumbnails_url_pattern.format(barcode = item.barcode)
              %if item.barcode :
-               <img class="mx-auto pt-3 thumbnail-image" style="width: 90px"
+               <img class="mx-auto pt-3 thumbnail-image" style="width: 90px" role=none
                    src="{{thumbnail_url_for_barcode}}" onerror="this.src='{{base_url}}/static/missing-thumbnail.svg';this.onerror='';">
              %else :
                <img class="mx-auto pt-3 thumbnail-image" style="width: 90px"

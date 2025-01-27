@@ -102,7 +102,7 @@ img.footer-logo {
 /* Miscellaneous DIBS look & feel customizations ........................... */
 
 a {
-  color: black;
+  color: #005679;
   text-decoration: underline;
 }
 
@@ -111,7 +111,11 @@ a {
 }
 
 .caltech-color {
-  color: #FF6C0C;
+  color: #E57200;
+}
+
+.text-info {
+  color: #2b2b2b !important
 }
 
 .big-checkbox {
@@ -126,12 +130,12 @@ a {
 
 .btn.btn-unavailable {
   background-color: transparent;
-  color: #212529;
+  color: #2b2b2b;
   font-weight: bold;
 }
 .btn.btn-unavailable:disabled{
   background-color: transparent;
-  color: #212529 !important;
+  color: #2b2b2b !important;
   font-weight: bold;
   opacity: 1 !important;
 }
