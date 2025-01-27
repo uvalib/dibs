@@ -1,6 +1,6 @@
 {
     "options": {
-        "allowStealFocus": false,
+        "allowStealFocus": true,
         "authAPIVersion": 1,
         "bookmarkThumbHeight": 150,
         "bookmarkThumbWidth": 100,
