@@ -146,6 +146,10 @@
        let uvDiv = uv[0];
        uvDiv.insertBefore(endLoanButton('mobile-loan-button'), uvDiv.firstChild);
 
+       // remove the top link
+       let topEle = document.getElementById('top');
+       topEle.remove();
+
        // Write some info useful when debugging.
        log('parsed metadata', dibsUV.extension.helper.manifest.getMetadata());
      });

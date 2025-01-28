@@ -1,10 +1,10 @@
 {
     "options": {
-        "allowStealFocus": true,
+        "allowStealFocus": false,
         "authAPIVersion": 1,
         "bookmarkThumbHeight": 150,
         "bookmarkThumbWidth": 100,
-        "dropEnabled": true,
+        "dropEnabled": false,
         "footerPanelEnabled": true,
         "headerPanelEnabled": true,
         "leftPanelEnabled": true,
@@ -51,7 +51,7 @@
         "saveUserSettings": true,
         "clickToZoomEnabled": true,
         "searchWithinEnabled": false,
-        "termsOfUseEnabled": true,
+        "termsOfUseEnabled": false,
         "theme": "uv-en-GB-theme",
         "tokenStorage": "session",
         "useArrowKeysToNavigate": true,
