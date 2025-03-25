@@ -418,7 +418,7 @@ class VirgoAPIInterface(LSPInterface):
             ''' get authorization key '''
             if (self.secret != None):
                 expirationTime = int((datetime.now() + timedelta(minutes=20)).timestamp())
-                values =  {'userId': 'anonymous', 'isUva': False, 'homeLibrary': '', 'profile': '', 'canPurchase': False, 'canLEO': False, 'canLEOPlus': False, 'canPlaceReserve': False, 'useSIS': False, 'role': 'guest', 'authMethod': 'none', 'exp': expirationTime, 'iss': 'v4'}
+                values =  {'userId': 'anonymous', 'isUva': False, 'homeLibrary': '', 'profile': '', 'canPurchase': False, 'canLEO': False, 'canLEOPlus': False, 'canPlaceReserve': False, 'useSIS': False, 'role': 'guest', 'authMethod': 'none', 'version': '1.2.1', 'exp': expirationTime, 'iss': 'v4'}
                 log(f'Getting authorization key from {self.urlAuth}')
                 data = urllib.parse.urlencode(values).encode("utf-8")
                 log(f'Building authorization key using jwt encode')
@@ -438,7 +438,7 @@ class VirgoAPIInterface(LSPInterface):
             ''' build authorization key '''
             if (username != None and self.secret != None):
                 expirationTime = int((datetime.now() + timedelta(minutes=20)).timestamp())
-                values = {"iss" : "v4", "userId" : f'{username}', "exp" : expirationTime}
+                values = {"iss" : "v4", "userId" : f'{username}', "version": "1.2.1", "exp" : expirationTime}
                 log(f'Building authorization key for user {username} using jwt encode')
                 log(f'Using secret key {self.secret}')
                 self.authKey = jwt.encode(values, self.secret, algorithm="HS256")
