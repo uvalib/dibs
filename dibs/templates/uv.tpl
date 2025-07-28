@@ -171,11 +171,6 @@
      console.info("set to timeout in "+(timeout/1000).toString()+" seconds");
      setTimeout(() => { window.location.reload(); }, timeout);
 
-     // add the timeout warning to the viewer footer
-     let tgt = document.getElementsByClassName("options minimiseButtons")[0]
-     let warn = document.getElementById("expire-warn")
-     tgt.appendChild( warn )
-
      // 15 minutes prior to end, show an expire warning
      warnMS = (end - now) - (15*60*1000); // expire minus 15 minutes
      if ( warnMS <= 0) {
@@ -183,6 +178,12 @@
      }
      console.info("set to warn in "+(warnMS/1000).toString()+" seconds");
      setTimeout(() => {
+       // add the timeout warning to the viewer footer
+       console.log("MOVE EXPIRE NOTE TO OPTIONS PANEL")
+       let tgt = document.getElementsByClassName("options minimiseButtons")[0]
+       let warn = document.getElementById("expire-warn")
+       tgt.appendChild( warn )
+
         let txtMins = `${warnMs/1000/60}`;
         document.getElementById("warn-mins").textContent = txtMins;
         document.getElementById("expire-warn").style.display="block";
