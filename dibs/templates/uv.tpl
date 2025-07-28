@@ -31,7 +31,7 @@
       <div id="uv"></div>
       <div
         id="expire-warn"
-        style="display:none; font-size: 1.25em; padding: 12px 0 0 0; text-align: center; font-weight: bold"
+        style="display:none; font-size: 1.25em; padding: 12px 0 0 0; text-align: center; font-weight: bold; color: #ffff00"
       >
         Your loan will expire in <span id="warn-mins">15</span> minutes. Once expired, you can re-borrow after 30 minutes, as long as the item is not on loan to another person.
       </div>
@@ -183,13 +183,15 @@
      }
      console.info("set to warn in "+(warnMS/1000).toString()+" seconds");
      setTimeout(() => {
-        document.getElementById("warn-mins).textContent = ""+warnMs/1000/60;
+        let txtMins = `${warnMs/1000/60}`;
+        document.getElementById("warn-mins").textContent = txtMins;
         document.getElementById("expire-warn").style.display="block";
         setInterval( () => {
           warnMS -= (60*1000);
-          document.getElementById("warn-mins).textContent = ""+warnMs/1000/60;
+          let txtMins = `${warnMs/1000/60}`;
+          document.getElementById("warn-mins").textContent = txtMins;
         }, 60*1000)
-     }, 2000); // HACK: warnMS
+     }, 2000);
    }, false);
 
    window.onpageshow = function (event) {
