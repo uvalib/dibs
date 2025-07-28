@@ -29,6 +29,12 @@
     </p>
     <div class="uv-div row h-100">
       <div id="uv"></div>
+      <div
+        id="expire-warn"
+        style="display:none; font-size: 1.15em; margin: 20px 0px; text-align: center; font-weight: bold"
+      >
+        Your loan will expire in 15 minutes. Once expired, you can re-borrow after 30 minutes, as long as the item is not on loan to another person.
+      </div>
     </div>
   </div>
 
@@ -161,8 +167,13 @@
      var now = new Date( Date().toLocaleString('en-US', {timeZone: 'US/Eastern'}) ).getTime()
      var end = new Date("{{js_end_time}}").getTime();
      var timeout = (end - now) + 1000;
-     // console.info("set to timeout in "+(timeout/1000).toString()+" seconds");
+     console.info("set to timeout in "+(timeout/1000).toString()+" seconds");
      setTimeout(() => { window.location.reload(); }, timeout);
+
+     // 1t5 minutes prior to end, show an expire warning
+     var warnTimeout = (end - now) - (15*60*1000); // expire minus 15 minutes
+     console.info("set to warn in "+(warnTimeout/1000).toString()+" seconds");
+     setTimeout(() => { document.getElementById("expire-warn").style.display="block"; }, warnTimeout);
    }, false);
 
    window.onpageshow = function (event) {
