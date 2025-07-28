@@ -31,9 +31,9 @@
       <div id="uv"></div>
       <div
         id="expire-warn"
-        style="display:none; font-size: 1.15em; margin: 20px 0px; text-align: center; font-weight: bold"
+        style="display:none; font-size: 1.25em; padding: 12px 0 0 0; text-align: center; font-weight: bold"
       >
-        Your loan will expire in 15 minutes. Once expired, you can re-borrow after 30 minutes, as long as the item is not on loan to another person.
+        Your loan will expire in <span id="warn-mins">15</span> minutes. Once expired, you can re-borrow after 30 minutes, as long as the item is not on loan to another person.
       </div>
     </div>
   </div>
@@ -45,6 +45,7 @@
    let   poll_count       = 0;
    let   refresher;
    var   dibsUV;
+   var   warnMS = 0;
 
    function loanCheck() {
      httpGet('{{base_url}}/item-status/{{barcode}}',
@@ -170,10 +171,25 @@
      console.info("set to timeout in "+(timeout/1000).toString()+" seconds");
      setTimeout(() => { window.location.reload(); }, timeout);
 
-     // 1t5 minutes prior to end, show an expire warning
-     var warnTimeout = (end - now) - (15*60*1000); // expire minus 15 minutes
-     console.info("set to warn in "+(warnTimeout/1000).toString()+" seconds");
-     setTimeout(() => { document.getElementById("expire-warn").style.display="block"; }, warnTimeout);
+     // add the timeout warning to the viewer footer
+     let tgt = document.getElementsByClassName("options minimiseButtons")[0]
+     let warn = document.getElementById("expire-warn")
+     tgt.appendChild( warn )
+
+     // 15 minutes prior to end, show an expire warning
+     warnMS = (end - now) - (15*60*1000); // expire minus 15 minutes
+     if ( warnMS <= 0) {
+        warnMS = (end - now)
+     }
+     console.info("set to warn in "+(warnMS/1000).toString()+" seconds");
+     setTimeout(() => {
+        document.getElementById("warn-mins).textContent = ""+warnMs/1000/60;
+        document.getElementById("expire-warn").style.display="block";
+        setInterval( () => {
+          warnMS -= (60*1000);
+          document.getElementById("warn-mins).textContent = ""+warnMs/1000/60;
+        }, 60*1000)
+     }, 2000); // HACK: warnMS
    }, false);
 
    window.onpageshow = function (event) {
