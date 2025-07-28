@@ -45,7 +45,6 @@
    let   poll_count       = 0;
    let   refresher;
    var   dibsUV;
-   var   warnMS = 0;
 
    function loanCheck() {
      httpGet('{{base_url}}/item-status/{{barcode}}',
@@ -172,7 +171,7 @@
      setTimeout(() => { window.location.reload(); }, timeout);
 
      // 15 minutes prior to end, show an expire warning
-     warnMS = (end - now) - (15*60*1000); // expire minus 15 minutes
+     var warnMS = (end - now) - (15*60*1000); // expire minus 15 minutes
      if ( warnMS <= 0) {
         warnMS = (end - now)
      }
