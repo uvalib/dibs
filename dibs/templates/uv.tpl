@@ -150,6 +150,9 @@
        let topEle = document.getElementById('top');
        topEle.remove();
 
+      let uvContainer = document.getElementByClassName("uv embedded")[0];
+      uvContainer.tabIndex = -1;
+
        // Write some info useful when debugging.
        log('parsed metadata', dibsUV.extension.helper.manifest.getMetadata());
      });
