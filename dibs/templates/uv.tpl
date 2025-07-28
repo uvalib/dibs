@@ -150,7 +150,7 @@
        let topEle = document.getElementById('top');
        topEle.remove();
 
-      let uvContainer = document.getElementByClassName("uv embedded")[0];
+      let uvContainer = document.getElementsByClassName("uv embedded")[0];
       uvContainer.tabIndex = -1;
 
        // Write some info useful when debugging.
