@@ -34,7 +34,7 @@
         style="display:none; font-size: 1.25em; padding: 12px 0 0 0; text-align: center; font-weight: bold; color: #ffff00"
       >
         Your loan will expire in <span id="warn-mins">15</span> minutes.
-        Once expired, you can re-borrow after <span id="wait-mins">xx</span> minutes, as long as the item is not on loan to another person.
+        Once expired, you can re-borrow after <span id="wait-mins">xx</span>, as long as the item is not on loan to another person.
       </div>
     </div>
   </div>
