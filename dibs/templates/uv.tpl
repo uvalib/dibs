@@ -115,7 +115,7 @@
         warnMS = (end - now);
      }
 
-     var warnMins = warnMs / 1000 / 60;
+     var warnMins = warnMS / 1000 / 60;
      let txtMins = `${warnMins}`;
      console.log(`TICK. new warnMins [${txtMins}]`);
      document.getElementById("warn-mins").textContent = txtMins;
