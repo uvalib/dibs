@@ -105,6 +105,24 @@
      return buttonElement;
    }
 
+   function checkLoanWarning() {
+     var now = new Date( Date().toLocaleString('en-US', {timeZone: 'US/Eastern'}) ).getTime()
+     var end = new Date("{{js_end_time}}").getTime();
+
+     // 15 minutes prior to end, show an expire warning
+     var warnMS = (end - now) - (15*60*1000);
+     if ( window.warnMS <= 0) {
+        window.warnMS = (end - now);
+     }
+
+     var warnMins = warnMs / 1000 / 60;
+     let txtMins = `${warnMins}`;
+     document.getElementById("warn-mins").textContent = txtMins;
+     if ( warnMins <= 15 ) {
+        document.getElementById("expire-warn").style.display = "block";
+     }
+   }
+
    // Hook ourselves into the UV viewer.
    window.addEventListener('uvLoaded', function (e) {
      log('uvLoaded listener called');
@@ -156,8 +174,14 @@
        let topEle = document.getElementById('top');
        topEle.remove();
 
+      // dont let the iframe get focus
       let uvContainer = document.getElementsByClassName("uv embedded")[0];
       uvContainer.tabIndex = -1;
+
+      console.log("MOVE EXPIRE NOTE TO OPTIONS PANEL");
+      let tgt = document.getElementsByClassName("options minimiseButtons")[0];
+      let warn = document.getElementById("expire-warn");
+      tgt.appendChild(warn);
 
        // Write some info useful when debugging.
        log('parsed metadata', dibsUV.extension.helper.manifest.getMetadata());
@@ -170,28 +194,7 @@
      console.info("set to timeout in "+(timeout/1000).toString()+" seconds");
      setTimeout(() => { window.location.reload(); }, timeout);
 
-     // 15 minutes prior to end, show an expire warning
-     var warnMS = (end - now) - (15*60*1000); // expire minus 15 minutes
-     if ( warnMS <= 0) {
-        warnMS = (end - now)
-     }
-     console.info("set to warn in "+(warnMS/1000).toString()+" seconds");
-     setTimeout(() => {
-       // add the timeout warning to the viewer footer
-       console.log("MOVE EXPIRE NOTE TO OPTIONS PANEL")
-       let tgt = document.getElementsByClassName("options minimiseButtons")[0]
-       let warn = document.getElementById("expire-warn")
-       tgt.appendChild( warn )
-
-        let txtMins = `${warnMs/1000/60}`;
-        document.getElementById("warn-mins").textContent = txtMins;
-        document.getElementById("expire-warn").style.display="block";
-        setInterval( () => {
-          warnMS -= (60*1000);
-          let txtMins = `${warnMs/1000/60}`;
-          document.getElementById("warn-mins").textContent = txtMins;
-        }, 60*1000)
-     }, 2000);
+     setInterval( ()=> { checkLoanWarning(); }, 60*1000)
    }, false);
 
    window.onpageshow = function (event) {
