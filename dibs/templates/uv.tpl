@@ -109,18 +109,12 @@
    function checkLoanWarning() {
      var now = new Date( Date().toLocaleString('en-US', {timeZone: 'US/Eastern'}) ).getTime()
      var end = new Date("{{js_end_time}}").getTime();
-
-     // 15 minutes prior to end, show an expire warning
-     var warnMS = (end - now) - (15*60*1000);
-     if ( warnMS <= 0) {
-        warnMS = (end - now);
-     }
-
-     var warnMins = Math.round(warnMS / 1000 / 60);
-     let txtMins = `${warnMins}`;
-     console.log(`TICK. new warnMins [${txtMins}]`);
+     var timeout = (end - now);
+     var timeoutMins = Math.round(timeout / 1000 / 60);
+     let txtMins = `${timeoutMins}`;
+     console.log(`TICK. new txtMins [${txtMins}]`);
      document.getElementById("warn-mins").textContent = txtMins;
-     if ( warnMins <= 15 ) {
+     if ( timeoutMins <= 15 ) {
         document.getElementById("expire-warn").style.display = "block";
      }
    }
