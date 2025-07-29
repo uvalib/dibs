@@ -111,12 +111,13 @@
 
      // 15 minutes prior to end, show an expire warning
      var warnMS = (end - now) - (15*60*1000);
-     if ( window.warnMS <= 0) {
-        window.warnMS = (end - now);
+     if ( warnMS <= 0) {
+        warnMS = (end - now);
      }
 
      var warnMins = warnMs / 1000 / 60;
      let txtMins = `${warnMins}`;
+     console.log(`TICK. new warnMins [${txtMins}]`);
      document.getElementById("warn-mins").textContent = txtMins;
      if ( warnMins <= 15 ) {
         document.getElementById("expire-warn").style.display = "block";
