@@ -33,7 +33,8 @@
         id="expire-warn"
         style="display:none; font-size: 1.25em; padding: 12px 0 0 0; text-align: center; font-weight: bold; color: #ffff00"
       >
-        Your loan will expire in <span id="warn-mins">15</span> minutes. Once expired, you can re-borrow after 30 minutes, as long as the item is not on loan to another person.
+        Your loan will expire in <span id="warn-mins">15</span> minutes.
+        Once expired, you can re-borrow after <span id="wait-mins">xx</span< minutes, as long as the item is not on loan to another person.
       </div>
     </div>
   </div>
@@ -115,7 +116,7 @@
         warnMS = (end - now);
      }
 
-     var warnMins = warnMS / 1000 / 60;
+     var warnMins = Math.round(warnMS / 1000 / 60);
      let txtMins = `${warnMins}`;
      console.log(`TICK. new warnMins [${txtMins}]`);
      document.getElementById("warn-mins").textContent = txtMins;
@@ -179,7 +180,8 @@
       let uvContainer = document.getElementsByClassName("uv embedded")[0];
       uvContainer.tabIndex = -1;
 
-      console.log("MOVE EXPIRE NOTE TO OPTIONS PANEL");
+      // move the span containing expire warning to the bottom of the viewer
+      document.getElementById("wait-mins").textContent = `${wait_time}`;
       let tgt = document.getElementsByClassName("options minimiseButtons")[0];
       let warn = document.getElementById("expire-warn");
       tgt.appendChild(warn);
